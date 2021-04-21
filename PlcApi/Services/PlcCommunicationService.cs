@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using PlcApi.Exceptions;
 using PlcApi.Services.Interfaces;
 using S7.Net;
 
@@ -18,17 +19,24 @@ namespace PlcApi.Services
         private readonly short Rack = 0;
         private readonly short Slot = 1;
 
+        //Tablica z PLC przypisanymi do użytkowników? 
+        //czy baza danych?
+        //tablica obiektów z PLC i ID użytkowników
+
+
         public PlcCommunicationService(ILogger<PlcCommunicationService> logger)
         {
             _logger = logger;
         }
 
-        public int GetSingleOutput(int byteAddress, int bitAddress)
+        public Boolean GetSingleOutput(int byteAddress, int bitAddress)
         {
+            if (_plc is null)
+                throw new MyPlcException("First start your connection with the PLC!");
             if (!_plc.IsConnected)
-                throw new PlcException(S7.Net.ErrorCode.ConnectionError);
+                throw new MyPlcException("Connection with the PLC lost");
             else
-                return (int)_plc.Read($"Q{byteAddress}.{bitAddress}");
+                return (Boolean)_plc.Read($"Q{byteAddress}.{bitAddress}");
         }
 
 
@@ -38,7 +46,7 @@ namespace PlcApi.Services
             _plc.Open();
             if (!_plc.IsConnected)
             {
-                throw new PlcException(ErrorCode.ConnectionError);
+                throw new MyPlcException("Connection with the PLC lost");
             }
             
         }

@@ -34,7 +34,7 @@ namespace PlcApi.Middleware
                 context.Response.StatusCode = 404;
                 await context.Response.WriteAsync(notFoundException.Message);
             }
-            catch (PlcException plcException)
+            catch (MyPlcException plcException)
             {
                 context.Response.StatusCode = 307;
                 await context.Response.WriteAsync(plcException.Message);

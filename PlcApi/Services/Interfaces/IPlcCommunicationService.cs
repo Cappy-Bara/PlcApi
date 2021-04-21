@@ -8,7 +8,7 @@ namespace PlcApi.Services.Interfaces
 {
     public interface IPlcCommunicationService
     {
-       public int GetSingleOutput(int byteAddress, int bitAddress);
+       public Boolean GetSingleOutput(int byteAddress, int bitAddress);
        public void StartPlcCommunication();
     }
 }

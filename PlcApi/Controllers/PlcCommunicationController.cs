@@ -21,7 +21,7 @@ namespace PlcApi.Controllers
         }
 
 
-        [HttpGet("/{byteAddress}/{bitAddress}")]
+        [HttpGet("{byteAddress}/{bitAddress}")]
         public ActionResult getSingleOutputState([FromRoute] int byteAddress, [FromRoute] int bitAddress)
         {
             return Ok(_communicationService.GetSingleOutput(byteAddress, bitAddress));
