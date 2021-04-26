@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using PlcApi.Entities;
 using PlcApi.Middleware;
 using PlcApi.Services;
 using PlcApi.Services.Interfaces;
@@ -31,8 +32,10 @@ namespace PlcApi
         {
 
             services.AddControllers();
+            services.AddDbContext<PlcDbContext>();
+            services.AddScoped<PlcModelsSeeder>();
             services.AddScoped<ExceptionHandlingMiddleware>();
-            services.AddSingleton<IPlcCommunicationService, PlcCommunicationService>();
+            services.AddScoped<IPlcCommunicationService, PlcCommunicationService>();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "PlcApi", Version = "v1" });
@@ -40,8 +43,10 @@ namespace PlcApi
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, PlcModelsSeeder modelsSeeder)
         {
+            modelsSeeder.Seed();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
