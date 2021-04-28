@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using PlcApi.Entities;
 using PlcApi.Exceptions;
 using PlcApi.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using S7.Net;
 
 namespace PlcApi.Services
@@ -17,13 +18,10 @@ namespace PlcApi.Services
         private readonly ILogger<PlcCommunicationService> _logger;
         private readonly PlcDbContext _dbContext;
         
-        private  Plc _plc = null;
-        private readonly string ipAddress = "127.0.0.1";
-        private readonly short Rack = 0;
-        private readonly short Slot = 1;
 
+        
         //przechowywanie listy typu plc tutaj?
-        //mapper?
+        //tworzenie instancji plc w dbcontext tutaj?
 
 
         public PlcCommunicationService(ILogger<PlcCommunicationService> logger, PlcDbContext dbContext)
@@ -32,26 +30,49 @@ namespace PlcApi.Services
             _dbContext = dbContext;
         }
 
-        public Boolean GetSingleOutput(int byteAddress, int bitAddress)
+            public Boolean GetSingleOutput(int byteAddress, int bitAddress,int plcId)
+            {
+                Plc _plc = FindPlc(plcId);
+                if (_plc is null)
+                    throw new MyPlcException("First start your connection with the PLC!");
+                if (!_plc.IsConnected)
+                    throw new MyPlcException("Connection with the PLC lost");
+                else
+                    return (Boolean)_plc.Read($"Q{byteAddress}.{bitAddress}");
+            }
+        
+        public void StartPlcCommunication(int plcId)
         {
-            if (_plc is null)
-                throw new MyPlcException("First start your connection with the PLC!");
-            if (!_plc.IsConnected)
-                throw new MyPlcException("Connection with the PLC lost");
-            else
-                return (Boolean)_plc.Read($"Q{byteAddress}.{bitAddress}");
-        }
-
-
-        public void StartPlcCommunication()
-        {
-            _plc = new Plc(CpuType.S71200, ipAddress, Rack, Slot);
+            Plc _plc = FindPlc(plcId);
+            if(_plc==null)
+                throw new MyPlcException("Plc does not exist");
             _plc.Open();
             if (!_plc.IsConnected)
             {
                 throw new MyPlcException("Connection with the PLC lost");
             }
-            
         }
+
+        
+        public void CreatePlc(string ip, int model)
+        {
+            PlcModel plcModel = _dbContext.Models.FirstOrDefault(m => m.CpuModel == model);
+            _dbContext.PLCs.Add(
+                new PlcEntity()
+                {
+                    ModelId = model,
+                    Ip = ip,
+                    Plc = new Plc(plcModel.Cpu, ip, plcModel.Rack, plcModel.Slot),
+                    Model = plcModel
+                }
+                );
+            _dbContext.SaveChanges();
+        }
+       
+        public Plc FindPlc(int plcId)
+        {
+            return _dbContext.PLCs.FirstOrDefault(n => n.Id == plcId).Plc;
+        }
+        
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace PlcApi.Entities
 {
@@ -22,15 +23,22 @@ namespace PlcApi.Entities
             modelBuilder.Entity<PlcEntity>()
                 .Property(p => p.Ip)
                 .IsRequired();
-
+        
+            modelBuilder.Entity<PlcEntity>()
+            .Property(p => p.Plc)
+            .IsRequired()
+            .HasConversion
+                (
+                n=> PlcConverter.toPlcProvider(n),
+                m => PlcConverter.toPlc(m)
+                );    
+           
             modelBuilder.Entity<InputOutput>()
                 .Property(i => i.Address)
                 .IsRequired();
             modelBuilder.Entity<InputOutput>()
                 .Property(i => i.PlcId)
                 .IsRequired();
-
-
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

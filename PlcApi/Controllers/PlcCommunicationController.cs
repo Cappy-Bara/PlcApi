@@ -20,20 +20,29 @@ namespace PlcApi.Controllers
             _communicationService = communicationService;
         }
 
-
-        [HttpGet("{byteAddress}/{bitAddress}")]
-        public ActionResult getSingleOutputState([FromRoute] int byteAddress, [FromRoute] int bitAddress)
+       
+        /*
+        [HttpGet("{plcId}/{byteAddress}/{bitAddress}")]
+        public ActionResult getSingleOutputState([FromRoute] int plcId, [FromRoute] int byteAddress, [FromRoute] int bitAddress)
         {
-            return Ok(_communicationService.GetSingleOutput(byteAddress, bitAddress));
+            return Ok(_communicationService.GetSingleOutput(byteAddress, bitAddress, plcId));
         }
-
-        [HttpPost]
-        public ActionResult ConnectToPlc()
+         */
+        [HttpPost("{plcId}")]
+        public ActionResult ConnectToPlc(int plcId)
         {
-            _communicationService.StartPlcCommunication();
+            _communicationService.StartPlcCommunication(plcId);
             return Ok("Communication Started");
         }
 
+       
+
+        [HttpPost("{ip}/{model}")]
+        public ActionResult CreatePlc(string ip, int model)
+        {
+            _communicationService.CreatePlc(ip,model);
+            return Ok("Communication Started");
+        }
 
     }
 
