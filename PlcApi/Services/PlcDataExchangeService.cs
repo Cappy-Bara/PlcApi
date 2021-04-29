@@ -18,10 +18,6 @@ namespace PlcApi.Services
         private readonly ILogger<PlcDataExchangeService> _logger;
         private readonly PlcDbContext _dbContext;
         
-
-        
-        //przechowywanie listy typu plc tutaj?
-        //tworzenie instancji plc w dbcontext tutaj?
             
 
         public PlcDataExchangeService(ILogger<PlcDataExchangeService> logger, PlcDbContext dbContext)

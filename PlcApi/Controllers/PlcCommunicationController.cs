@@ -4,8 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using PlcApi.Entities;
 using PlcApi.Services;
 using PlcApi.Services.Interfaces;
+using S7.Net;
 
 namespace PlcApi.Controllers
 {
@@ -15,11 +17,13 @@ namespace PlcApi.Controllers
     {
         private readonly IPlcDataExchangeService _dataExchangeService;
         private readonly IPlcCommunicationService _communicationService;
+        private readonly PlcDbContext _dbContext;
 
-        public PlcCommunicationController(IPlcDataExchangeService communicationService,IPlcCommunicationService dbService)
+        public PlcCommunicationController(IPlcDataExchangeService communicationService,IPlcCommunicationService dbService, PlcDbContext dbContext)
         {
             _dataExchangeService = communicationService;
             _communicationService = dbService;
+            _dbContext = dbContext;
         }
 
         [HttpGet("{plcId}/{byteAddress}/{bitAddress}")]
@@ -36,10 +40,11 @@ namespace PlcApi.Controllers
             return Ok("Communication Started");
         }
 
-        [HttpPost("{ip}/{model}")]
-        public ActionResult CreatePlc(string ip, int id)
+        [HttpPost("{ip}/{model}/{id}")]
+        public ActionResult CreatePlc(string ip,int model, int id)
         {
-            _communicationService.AddPlc(id, ip);
+            var plcModel = _dbContext.Models.FirstOrDefault(n => n.CpuModel == model);
+            _communicationService.AddPlc(id, ip, plcModel);
             return Ok("Plc Created.");
         }
     }

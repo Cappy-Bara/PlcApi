@@ -10,7 +10,7 @@ namespace PlcApi.Services
 {
     public class PlcCommunicationService :IPlcCommunicationService
     {
-        public List<MyPlc> PlcList = new List<MyPlc>();
+        public Dictionary<int,Plc> Plcs = new Dictionary<int, Plc>();
 
         public bool AddPlc(int userId, string ip)
         {

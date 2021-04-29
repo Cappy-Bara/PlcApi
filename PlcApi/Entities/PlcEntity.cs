@@ -17,6 +17,5 @@ namespace PlcApi.Entities
         public int ModelId { get; set; }
         public virtual PlcModel Model { get; set; }
         public virtual List<InputOutput> InputOutput { get; set; }
-        public virtual Plc Plc { get; set; }
     }
 }

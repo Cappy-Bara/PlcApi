@@ -24,14 +24,6 @@ namespace PlcApi.Entities
                 .Property(p => p.Ip)
                 .IsRequired();
         
-            modelBuilder.Entity<PlcEntity>()
-            .Property(p => p.Plc)
-            .IsRequired()
-            .HasConversion
-                (
-                n=> PlcConverter.toPlcProvider(n),
-                m => PlcConverter.toPlc(m)
-                );    
            
             modelBuilder.Entity<InputOutput>()
                 .Property(i => i.Address)
