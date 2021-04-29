@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using S7.Net;
 
-namespace PlcApi.Services.Interfaces
+namespace PlcApi.Services
 {
     public interface IPlcCommunicationService
     {
-       public Boolean GetSingleOutput(int byteAddress, int bitAddress, int plcId);
-       public void StartPlcCommunication(int plcId);
-       public void CreatePlc(string ip, int model);
+
+        public bool AddPlc(int userId, string ip);
+        public bool StartCommunication(int userId);
+        public bool StopCommunication(int userId);
+        public Plc GetPlc(int userId);
     }
 }

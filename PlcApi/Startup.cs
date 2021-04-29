@@ -35,7 +35,8 @@ namespace PlcApi
             services.AddDbContext<PlcDbContext>();
             services.AddScoped<PlcModelsSeeder>();
             services.AddScoped<ExceptionHandlingMiddleware>();
-            services.AddScoped<IPlcCommunicationService, PlcCommunicationService>();
+            services.AddSingleton<IPlcCommunicationService, PlcCommunicationService>();
+            services.AddScoped<IPlcDataExchangeService, PlcDataExchangeService>();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "PlcApi", Version = "v1" });
