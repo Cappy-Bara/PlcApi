@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using PlcApi.Entities;
+using PlcApi.Exceptions;
 using S7.Net;
 
 namespace PlcApi.Services
@@ -12,57 +13,51 @@ namespace PlcApi.Services
     {
         public Dictionary<int,Plc> Plcs = new Dictionary<int, Plc>();
 
-        public bool AddPlc(int userId, string ip)
+        public void AddPlc(int plcId, string ip, PlcModel model)
         {
-            var plc = PlcList.FirstOrDefault(n => n.UserId == userId);
-            if (plc != null)
-                DeletePlc(userId);
+            if (!Plcs.TryGetValue(plcId, out _))
+                DeletePlc(plcId);
 
-            plc = new MyPlc(ip, userId);
-            if(plc != null) 
-            { 
-                PlcList.Add(plc);
-                return true;
+            Plc plc = new Plc(model.Cpu,ip,model.Rack,model.Slot);
+            if(plc == null) 
+            {
+                throw new MyPlcException("Plc creation failed. Wrong Model or Ip.");
             }
-            return false;
+            Plcs.Add(plcId, plc);
         }
         
-        public bool StartCommunication(int userId)
+        public void StartCommunication(int plcId)
         {
-            var plc = PlcList.FirstOrDefault(n => n.UserId == userId);
-            if(plc != null) 
+            if(Plcs.TryGetValue(plcId, out Plc plc))
             {
-                plc.Plc.Open();
-                return plc.Plc.IsConnected;
+                plc.Open();
             }
-            return false;
+            throw new NotFoundException("Communication failed. Plc not found.");
         }
 
-        public Plc GetPlc(int userId)
+        public Plc GetPlc(int plcId)
         {
-            return PlcList.FirstOrDefault(n => n.UserId == userId).Plc;
+            if(Plcs.TryGetValue(plcId, out Plc plc))
+                return plc;
+            throw new NotFoundException("Plc not found.");
         }
 
-        public bool StopCommunication(int userId)
+        public void StopCommunication(int plcId)
         {
-            var plc = PlcList.FirstOrDefault(n => n.UserId == userId);
-            if(plc.Plc.IsConnected)
+            if (Plcs.TryGetValue(plcId, out Plc plc))
             {
-                plc.Plc.Close();
+                if (plc.IsConnected)
+                    plc.Close();
             }
-            return false;
         }
 
-        public bool DeletePlc(int userId)
+        public void DeletePlc(int plcId)
         {
-           var plc = PlcList.FirstOrDefault(n => n.UserId == userId);
-           if(plc != null)
+           if (Plcs.TryGetValue(plcId, out _))
             {
-                StopCommunication(userId);
-                PlcList.Remove(plc);
-                return true;
+                StopCommunication(plcId);
+                Plcs.Remove(plcId);
             }
-            return false;
         }
     }
 }

@@ -12,6 +12,7 @@ namespace PlcApi.Entities
 {
     public class PlcEntity
     {
+        [Key]
         public int Id { get; set; }
         public string Ip { get; set; }
         public int ModelId { get; set; }

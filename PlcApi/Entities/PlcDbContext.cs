@@ -24,10 +24,6 @@ namespace PlcApi.Entities
                 .Property(p => p.Ip)
                 .IsRequired();
         
-           
-            modelBuilder.Entity<InputOutput>()
-                .Property(i => i.Address)
-                .IsRequired();
             modelBuilder.Entity<InputOutput>()
                 .Property(i => i.PlcId)
                 .IsRequired();
