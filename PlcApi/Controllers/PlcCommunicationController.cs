@@ -62,5 +62,14 @@ namespace PlcApi.Controllers
             return Ok("I/O Created");
         }
 
+        [HttpPost("{plcId}/Diode")]
+        public ActionResult CreateDiode([FromRoute] int plcId, [FromBody] CreateDiodeDto dto)
+        {
+            _dataExchangeService.AddDiodeToDb(plcId, dto);
+            return Ok("Diode created");
+        }
+
+
+
     }
 }

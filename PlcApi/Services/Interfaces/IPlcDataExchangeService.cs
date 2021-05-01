@@ -14,6 +14,8 @@ namespace PlcApi.Services.Interfaces
         public Boolean GetSingleOutput(Plc plc,int byteAddress, int bitAddress);
         public int AddPlcToDb(PlcEntity dto);
         public int AddInputOutputToDb(int plcId, IOCreateDto IO);
-        
+        public InputOutput AddInputOutputToDb(int plcId, int bit, int myByte, IOType type);
+        public int AddDiodeToDb(int plcId, CreateDiodeDto dto);
+
     }
 }

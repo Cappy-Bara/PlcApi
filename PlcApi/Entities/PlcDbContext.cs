@@ -13,6 +13,7 @@ namespace PlcApi.Entities
         public DbSet<PlcEntity> PLCs { get; set; } 
         public DbSet<PlcModel> Models { get; set; } 
         public DbSet<InputOutput> InputsOutputs { get; set; }
+        public DbSet<Diode> Diodes { get; set; }
 
         string _connectionString = "Server=DESKTOP-R8L9JN2\\LEARNINGSQL;Database=PlcDb;Trusted_Connection=True;";
         protected override void OnModelCreating(ModelBuilder modelBuilder)
