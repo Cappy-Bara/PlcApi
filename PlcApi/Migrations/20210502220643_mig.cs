@@ -2,7 +2,7 @@
 
 namespace PlcApi.Migrations
 {
-    public partial class dbupdate : Migration
+    public partial class mig : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -65,6 +65,33 @@ namespace PlcApi.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Diodes",
+                columns: table => new
+                {
+                    DiodeId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PosX = table.Column<int>(type: "int", nullable: false),
+                    PosY = table.Column<int>(type: "int", nullable: false),
+                    InputOutputId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Diodes", x => x.DiodeId);
+                    table.ForeignKey(
+                        name: "FK_Diodes_InputsOutputs_InputOutputId",
+                        column: x => x.InputOutputId,
+                        principalTable: "InputsOutputs",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Diodes_InputOutputId",
+                table: "Diodes",
+                column: "InputOutputId");
+
             migrationBuilder.CreateIndex(
                 name: "IX_InputsOutputs_PlcId",
                 table: "InputsOutputs",
@@ -78,6 +105,9 @@ namespace PlcApi.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Diodes");
+
             migrationBuilder.DropTable(
                 name: "InputsOutputs");
 

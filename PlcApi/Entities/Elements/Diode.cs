@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,7 +16,7 @@ namespace PlcApi.Entities
         public string Status { get; set; }
         public int PosX { get; set; }
         public int PosY { get; set; }
-        public int OutputId { get; set; }
-        public virtual InputOutput Output {get; set;}
+        public int InputOutputId { get; set; }
+        public virtual InputOutput InputOutput {get; set;}
     }
 }

@@ -25,7 +25,7 @@ namespace PlcApi.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("OutputId")
+                    b.Property<int>("InputOutputId")
                         .HasColumnType("int");
 
                     b.Property<int>("PosX")
@@ -39,7 +39,7 @@ namespace PlcApi.Migrations
 
                     b.HasKey("DiodeId");
 
-                    b.HasIndex("OutputId");
+                    b.HasIndex("InputOutputId");
 
                     b.ToTable("Diodes");
                 });
@@ -120,13 +120,13 @@ namespace PlcApi.Migrations
 
             modelBuilder.Entity("PlcApi.Entities.Diode", b =>
                 {
-                    b.HasOne("PlcApi.Entities.InputOutput", "Output")
-                        .WithMany()
-                        .HasForeignKey("OutputId")
+                    b.HasOne("PlcApi.Entities.InputOutput", "InputOutput")
+                        .WithMany("Diodes")
+                        .HasForeignKey("InputOutputId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Output");
+                    b.Navigation("InputOutput");
                 });
 
             modelBuilder.Entity("PlcApi.Entities.InputOutput", b =>
@@ -149,6 +149,11 @@ namespace PlcApi.Migrations
                         .IsRequired();
 
                     b.Navigation("Model");
+                });
+
+            modelBuilder.Entity("PlcApi.Entities.InputOutput", b =>
+                {
+                    b.Navigation("Diodes");
                 });
 
             modelBuilder.Entity("PlcApi.Entities.PlcEntity", b =>

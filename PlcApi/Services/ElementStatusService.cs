@@ -22,7 +22,7 @@ namespace PlcApi.Services
         {
             foreach(Diode diode in _dbContext.Diodes)
             {
-                if (diode.Output.Status == true)        //Nie widzi obiektu Output w diodzie.  JAkaś kolekcja w IO?
+                if (diode.InputOutput.Status == true)        //Nie widzi obiektu Output w diodzie.  JAkaś kolekcja w IO?
                     diode.Status = "On";
                 else
                     diode.Status = "Off";
@@ -35,7 +35,7 @@ namespace PlcApi.Services
         {
             List<Diode> MyList = new List<Diode>();
             MyList.AddRange(
-                _dbContext.Diodes.Where(n => n.Output.PlcId == plcId)
+                _dbContext.Diodes.Where(n => n.InputOutput.PlcId == plcId)
                 );
             return MyList;
         }

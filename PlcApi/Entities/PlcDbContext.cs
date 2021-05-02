@@ -29,7 +29,6 @@ namespace PlcApi.Entities
                 .Property(i => i.PlcId)
                 .IsRequired();
 
-
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
