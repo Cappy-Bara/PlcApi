@@ -28,6 +28,8 @@ namespace PlcApi.Entities
             modelBuilder.Entity<InputOutput>()
                 .Property(i => i.PlcId)
                 .IsRequired();
+
+
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

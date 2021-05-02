@@ -19,20 +19,24 @@ namespace PlcApi.Controllers
     {
         private readonly IPlcDataExchangeService _dataExchangeService;
         private readonly IPlcCommunicationService _communicationService;
+        private readonly IElementStatusService _elementsService;
         private readonly PlcDbContext _dbContext;
 
-        public PlcCommunicationController(IPlcDataExchangeService communicationService, IPlcCommunicationService dbService, PlcDbContext dbContext)
+        public PlcCommunicationController(IPlcDataExchangeService communicationService, IPlcCommunicationService dbService,
+                                          IElementStatusService elementsService ,PlcDbContext dbContext)
+
         {
             _dataExchangeService = communicationService;
             _communicationService = dbService;
             _dbContext = dbContext;
+            _elementsService = elementsService;
         }
 
         [HttpGet("{plcId}/{byteAddress}/{bitAddress}")]
         public ActionResult getSingleOutputState([FromRoute] int plcId, [FromRoute] int byteAddress, [FromRoute] int bitAddress)
         {
             var plc = _communicationService.GetPlc(plcId);
-            return Ok(_dataExchangeService.GetSingleOutput(plc, byteAddress, bitAddress));
+            return Ok(_dataExchangeService.GetSingleBit(plc, byteAddress, bitAddress,"Q"));
         }
 
         [HttpPost("communication/{plcId}")]
@@ -67,6 +71,28 @@ namespace PlcApi.Controllers
         {
             _dataExchangeService.AddDiodeToDb(plcId, dto);
             return Ok("Diode created");
+        }
+
+        [HttpPut("{plcId}")]
+        public ActionResult RefreshIOStatus([FromRoute]int plcId)
+        {
+            _dataExchangeService.RefreshInputsAndOutputs(_communicationService.GetPlc(plcId), plcId);
+            return Ok("Refreshed.");
+        }
+
+
+        [HttpPut("refresh")]
+        public ActionResult RefreshElementsState()
+        {
+            _elementsService.UpdateDiodesStatus();
+            return Ok("Diode Status Refreshed");
+        }
+
+
+        [HttpGet("{plcId}/Diode")]
+        public ActionResult<List<Diode>> GetDiodesStatus([FromRoute] int plcId)
+        {
+            return Ok(_elementsService.ReturnDiodeStatus(plcId));
         }
 
 

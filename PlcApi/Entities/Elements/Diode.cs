@@ -4,10 +4,11 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using PlcApi.Entities.Elements;
 
 namespace PlcApi.Entities
 {
-    public class Diode
+    public class Diode : Element
     {
         [Key]
         public int DiodeId { get; set; }

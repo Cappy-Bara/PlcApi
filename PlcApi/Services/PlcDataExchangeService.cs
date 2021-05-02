@@ -27,15 +27,25 @@ namespace PlcApi.Services
             _dbContext = dbContext;
         }
 
-        public Boolean GetSingleOutput(Plc plc, int byteAddress, int bitAddress)
+        public Boolean GetSingleBit(Plc plc, int byteAddress, int bitAddress, string type)
         {
             if (plc is null)
                 throw new MyPlcException("First start your connection with the PLC!");
             if (!plc.IsConnected)
                 throw new MyPlcException("Connection with the PLC lost");
             else
-                return (Boolean)plc.Read($"Q{byteAddress}.{bitAddress}");
+                return (Boolean)plc.Read($"{type}{byteAddress}.{bitAddress}");
         }
+        public void WriteSingleByte(Plc plc, int byteAddress, int bitAddress, string type,bool value)
+        {
+            if (plc is null)
+                throw new MyPlcException("First start your connection with the PLC!");
+            if (!plc.IsConnected)
+                throw new MyPlcException("Connection with the PLC lost");
+            else
+                plc.Write($"{type}{byteAddress}.{bitAddress}",value);
+        }
+
 
         public int AddPlcToDb(PlcEntity dto) {             //sprawdzanie czy istnieje już plc dla danego użytkownika/maila
                                                            //
@@ -99,10 +109,30 @@ namespace PlcApi.Services
                 OutputId = io.Id,
                 Output = io,
             };
-            return _dbContext.Diodes.Add(diode).Entity.DiodeId;
+            var id = _dbContext.Diodes.Add(diode).Entity.DiodeId;
+            _dbContext.SaveChanges();
+            return id;
         }
 
-        //REFRESH INPUT OUTPUT
+        public void RefreshInputsAndOutputs(Plc plc,int plcId)
+        {
+            if (!plc.IsConnected)
+                throw new MyPlcException("No connection with PLC.");
+
+            List<InputOutput> IOList = _dbContext.InputsOutputs.Where(n => n.PlcId == plcId).ToList();
+            foreach(InputOutput io in IOList)
+            {
+                if (io.Type == IOType.Output)
+                {
+                    io.Status = GetSingleBit(plc, io.Byte, io.Bit, "Q");
+                    _dbContext.InputsOutputs.Update(io);
+                }
+                else if (io.Type == IOType.Input)
+                    WriteSingleByte(plc, io.Byte, io.Bit, "I", io.Status);
+                _dbContext.SaveChanges();
+            }
+
+        }
 
         //NOWY SERWIS TYPU ELements handler, który będzie zmeniał stan utilities przy każdym evencie.
 
