@@ -16,6 +16,7 @@ namespace PlcApi.Entities
         public string Status { get; set; }
         public int PosX { get; set; }
         public int PosY { get; set; }
+        [ForeignKey("InputOutputId")]
         public int InputOutputId { get; set; }
         public virtual InputOutput InputOutput {get; set;}
     }

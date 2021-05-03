@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using PlcApi.Entities;
 using PlcApi.Models;
 using PlcApi.Services.Interfaces;
@@ -20,8 +21,11 @@ namespace PlcApi.Services
 
         public void UpdateDiodesStatus()
         {
-            foreach(Diode diode in _dbContext.Diodes)
+            //var diodes = _dbContext.Diodes.Include(d => d.InputOutput);
+            foreach(Diode diode in _dbContext.Diodes.Include(d => d.InputOutput))
             {
+                if (diode.InputOutput == null)
+                    continue;
                 if (diode.InputOutput.Status == true)        //Nie widzi obiektu Output w diodzie.  JAkaś kolekcja w IO?
                     diode.Status = "On";
                 else

@@ -9,8 +9,8 @@ using PlcApi.Entities;
 namespace PlcApi.Migrations
 {
     [DbContext(typeof(PlcDbContext))]
-    [Migration("20210502220643_mig")]
-    partial class mig
+    [Migration("20210503145827_newMig")]
+    partial class newMig
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

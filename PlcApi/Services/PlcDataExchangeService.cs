@@ -107,7 +107,7 @@ namespace PlcApi.Services
                 PosX = dto.PosX,
                 PosY = dto.PosY,
                 InputOutputId = io.Id,
-                InputOutput = io,
+                //InputOutput = io,
             };
             var id = _dbContext.Diodes.Add(diode).Entity.DiodeId;
             _dbContext.SaveChanges();

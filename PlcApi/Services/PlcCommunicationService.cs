@@ -33,7 +33,7 @@ namespace PlcApi.Services
                 plc.Open();
             }
             else
-                throw new NotFoundException("Communication failed. Plc not found.");    //TU POPRAW XDDD
+                throw new NotFoundException("Communication failed. Plc not found.");
         }
 
         public Plc GetPlc(int plcId)
