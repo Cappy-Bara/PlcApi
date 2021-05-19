@@ -9,8 +9,8 @@ using PlcApi.Entities;
 namespace PlcApi.Migrations
 {
     [DbContext(typeof(PlcDbContext))]
-    [Migration("20210503145827_newMig")]
-    partial class newMig
+    [Migration("20210506150517_mig")]
+    partial class mig
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -44,6 +44,29 @@ namespace PlcApi.Migrations
                     b.HasIndex("InputOutputId");
 
                     b.ToTable("Diodes");
+                });
+
+            modelBuilder.Entity("PlcApi.Entities.Elements.Block", b =>
+                {
+                    b.Property<int>("BlockId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("PlcId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PosX")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PosY")
+                        .HasColumnType("int");
+
+                    b.HasKey("BlockId");
+
+                    b.HasIndex("PlcId");
+
+                    b.ToTable("Blocks");
                 });
 
             modelBuilder.Entity("PlcApi.Entities.InputOutput", b =>
@@ -123,12 +146,23 @@ namespace PlcApi.Migrations
             modelBuilder.Entity("PlcApi.Entities.Diode", b =>
                 {
                     b.HasOne("PlcApi.Entities.InputOutput", "InputOutput")
-                        .WithMany("Diodes")
+                        .WithMany()
                         .HasForeignKey("InputOutputId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("InputOutput");
+                });
+
+            modelBuilder.Entity("PlcApi.Entities.Elements.Block", b =>
+                {
+                    b.HasOne("PlcApi.Entities.PlcEntity", "Plc")
+                        .WithMany()
+                        .HasForeignKey("PlcId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Plc");
                 });
 
             modelBuilder.Entity("PlcApi.Entities.InputOutput", b =>
@@ -151,11 +185,6 @@ namespace PlcApi.Migrations
                         .IsRequired();
 
                     b.Navigation("Model");
-                });
-
-            modelBuilder.Entity("PlcApi.Entities.InputOutput", b =>
-                {
-                    b.Navigation("Diodes");
                 });
 
             modelBuilder.Entity("PlcApi.Entities.PlcEntity", b =>

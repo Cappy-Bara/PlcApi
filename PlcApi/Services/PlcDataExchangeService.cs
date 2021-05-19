@@ -11,6 +11,7 @@ using PlcApi.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using S7.Net;
 using PlcApi.Models;
+using PlcApi.Entities.Elements;
 
 namespace PlcApi.Services
 {
@@ -107,12 +108,29 @@ namespace PlcApi.Services
                 PosX = dto.PosX,
                 PosY = dto.PosY,
                 InputOutputId = io.Id,
-                //InputOutput = io,
             };
             var id = _dbContext.Diodes.Add(diode).Entity.DiodeId;
             _dbContext.SaveChanges();
             return id;
         }
+
+        public int AddBlockToDb(int plcId, CreateBlockDto dto)
+        {
+
+            Block block = new Block()
+            {
+                PosX = dto.PosX,
+                PosY = dto.PosY,
+                PlcId = plcId,
+            };
+            var id = _dbContext.Blocks.Add(block).Entity.BlockId;
+            _dbContext.SaveChanges();
+            return id;
+        }
+
+
+
+
 
         public void RefreshInputsAndOutputs(Plc plc,int plcId)
         {

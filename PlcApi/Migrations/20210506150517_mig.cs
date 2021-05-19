@@ -2,7 +2,7 @@
 
 namespace PlcApi.Migrations
 {
-    public partial class newMig : Migration
+    public partial class mig : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -38,6 +38,27 @@ namespace PlcApi.Migrations
                         name: "FK_PLCs_Models_ModelId",
                         column: x => x.ModelId,
                         principalTable: "Models",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Blocks",
+                columns: table => new
+                {
+                    BlockId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PosX = table.Column<int>(type: "int", nullable: false),
+                    PosY = table.Column<int>(type: "int", nullable: false),
+                    PlcId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Blocks", x => x.BlockId);
+                    table.ForeignKey(
+                        name: "FK_Blocks_PLCs_PlcId",
+                        column: x => x.PlcId,
+                        principalTable: "PLCs",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -88,6 +109,11 @@ namespace PlcApi.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Blocks_PlcId",
+                table: "Blocks",
+                column: "PlcId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Diodes_InputOutputId",
                 table: "Diodes",
                 column: "InputOutputId");
@@ -105,6 +131,9 @@ namespace PlcApi.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Blocks");
+
             migrationBuilder.DropTable(
                 name: "Diodes");
 

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using PlcApi.Entities;
+using PlcApi.Entities.Elements;
 using PlcApi.Exceptions;
 using PlcApi.Models;
 using PlcApi.Services;
@@ -73,6 +74,14 @@ namespace PlcApi.Controllers
             return Ok("Diode created");
         }
 
+        [HttpPost("{plcId}/Block")]
+        public ActionResult CreateBlock([FromRoute] int plcId, [FromBody] CreateBlockDto dto)
+        {
+            _dataExchangeService.AddBlockToDb(plcId, dto);
+            return Ok("Block created");
+        }
+
+
         [HttpPut("{plcId}")]
         public ActionResult RefreshIOStatus([FromRoute]int plcId)
         {
@@ -95,6 +104,11 @@ namespace PlcApi.Controllers
             return Ok(_elementsService.ReturnDiodeStatus(plcId));
         }
 
+        [HttpGet("{plcId}/Block")]
+        public ActionResult<List<Block>> GetBlockStatus([FromRoute] int plcId)
+        {
+            return Ok(_elementsService.ReturnBlockStatus(plcId));
+        }
 
 
     }

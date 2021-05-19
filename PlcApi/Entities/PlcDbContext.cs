@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using PlcApi.Entities.Elements;
 
 namespace PlcApi.Entities
 {
@@ -14,6 +15,7 @@ namespace PlcApi.Entities
         public DbSet<PlcModel> Models { get; set; } 
         public DbSet<InputOutput> InputsOutputs { get; set; }
         public DbSet<Diode> Diodes { get; set; }
+        public DbSet<Block> Blocks { get; set; }
 
         string _connectionString = "Server=DESKTOP-R8L9JN2\\LEARNINGSQL;Database=PlcDb;Trusted_Connection=True;";
         protected override void OnModelCreating(ModelBuilder modelBuilder)

@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PlcApi.Entities.Elements
+namespace PlcApi.Models
 {
-    public class Element
+    public class CreateBlockDto
     {
-        
+        public int PosX { get; set; }
+        public int PosY { get; set; }
     }
 }

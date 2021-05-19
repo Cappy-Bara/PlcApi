@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using PlcApi.Entities;
+using PlcApi.Entities.Elements;
 using PlcApi.Models;
 using PlcApi.Services.Interfaces;
 
@@ -40,6 +41,15 @@ namespace PlcApi.Services
             List<Diode> MyList = new List<Diode>();
             MyList.AddRange(
                 _dbContext.Diodes.Where(n => n.InputOutput.PlcId == plcId)
+                );
+            return MyList;
+        }
+
+        public List<Block> ReturnBlockStatus(int plcId)
+        {
+            List<Block> MyList = new List<Block>();
+            MyList.AddRange(
+                _dbContext.Blocks.Where(n => n.PlcId == plcId)
                 );
             return MyList;
         }
