@@ -12,7 +12,7 @@ namespace PlcApi.Services.Interfaces
     public interface IElementStatusService
     {
         public void UpdateDiodesStatus();
-        public List<Diode> ReturnDiodeStatus(int plcId);
-        public List<Block> ReturnBlockStatus(int plcId);
+        public List<Diode> ReturnPlcDiodes(int plcId);
+        public List<Block> ReturnPlcBlocks(int plcId);
     }
 }

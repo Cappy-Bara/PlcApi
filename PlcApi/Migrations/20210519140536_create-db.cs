@@ -2,7 +2,7 @@
 
 namespace PlcApi.Migrations
 {
-    public partial class mig : Migration
+    public partial class createdb : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

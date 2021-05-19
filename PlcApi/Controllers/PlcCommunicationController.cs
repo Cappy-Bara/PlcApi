@@ -101,13 +101,13 @@ namespace PlcApi.Controllers
         [HttpGet("{plcId}/Diode")]
         public ActionResult<List<Diode>> GetDiodesStatus([FromRoute] int plcId)
         {
-            return Ok(_elementsService.ReturnDiodeStatus(plcId));
+            return Ok(_elementsService.ReturnPlcDiodes(plcId));
         }
 
         [HttpGet("{plcId}/Block")]
         public ActionResult<List<Block>> GetBlockStatus([FromRoute] int plcId)
         {
-            return Ok(_elementsService.ReturnBlockStatus(plcId));
+            return Ok(_elementsService.ReturnPlcBlocks(plcId));
         }
 
 

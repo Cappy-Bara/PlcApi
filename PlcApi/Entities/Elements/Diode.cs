@@ -9,6 +9,8 @@ namespace PlcApi.Entities
 {
     public class Diode
     {
+
+
         [Key]
         public int DiodeId { get; set; }
         public string Status { get; set; }
@@ -17,5 +19,31 @@ namespace PlcApi.Entities
         [ForeignKey("InputOutputId")]
         public int InputOutputId { get; set; }
         public virtual InputOutput InputOutput {get; set;}
+
+
+        public void UpdateStatus()
+        {
+            if (InputOutput.Status == true)
+                Status = "On";
+            else
+                Status = "Off";
+        }
+
+
+
+
+
+
+
+
+
+
+
     }
+
+
+
+
+
+
 }

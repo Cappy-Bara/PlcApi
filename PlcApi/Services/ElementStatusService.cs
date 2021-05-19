@@ -20,23 +20,22 @@ namespace PlcApi.Services
             _dbContext = dbContext;
         }
 
+        public void UpdateDiodeInDb(Diode diode)
+        {
+            diode.UpdateStatus();
+            _dbContext.Diodes.Update(diode);
+        }
+        
         public void UpdateDiodesStatus()
         {
-            //var diodes = _dbContext.Diodes.Include(d => d.InputOutput);
             foreach(Diode diode in _dbContext.Diodes.Include(d => d.InputOutput))
             {
-                if (diode.InputOutput == null)
-                    continue;
-                if (diode.InputOutput.Status == true)        //Nie widzi obiektu Output w diodzie.  JAkaś kolekcja w IO?
-                    diode.Status = "On";
-                else
-                    diode.Status = "Off";
-                _dbContext.Diodes.Update(diode);
+                UpdateDiodeInDb(diode);
             }
             _dbContext.SaveChanges();
         }
 
-        public List<Diode> ReturnDiodeStatus(int plcId)
+        public List<Diode> ReturnPlcDiodes(int plcId)
         {
             List<Diode> MyList = new List<Diode>();
             MyList.AddRange(
@@ -45,7 +44,7 @@ namespace PlcApi.Services
             return MyList;
         }
 
-        public List<Block> ReturnBlockStatus(int plcId)
+        public List<Block> ReturnPlcBlocks(int plcId)
         {
             List<Block> MyList = new List<Block>();
             MyList.AddRange(

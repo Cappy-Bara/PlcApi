@@ -20,13 +20,13 @@ namespace PlcApi.Services
         private readonly ILogger<PlcDataExchangeService> _logger;
         private readonly PlcDbContext _dbContext;
 
-
-
         public PlcDataExchangeService(ILogger<PlcDataExchangeService> logger, PlcDbContext dbContext)
         {
             _logger = logger;
             _dbContext = dbContext;
         }
+
+
 
         public Boolean GetSingleBit(Plc plc, int byteAddress, int bitAddress, string type)
         {
@@ -46,15 +46,12 @@ namespace PlcApi.Services
             else
                 plc.Write($"{type}{byteAddress}.{bitAddress}",value);
         }
-
-
         public int AddPlcToDb(PlcEntity dto) {             //sprawdzanie czy istnieje już plc dla danego użytkownika/maila
                                                            //
             var addedValue = _dbContext.PLCs.Add(dto).Entity;
             _dbContext.SaveChanges();
             return addedValue.Id;
         }
-
         public int AddInputOutputToDb(int plcId, IOCreateDto dto)
         {
             var plc = _dbContext.PLCs.FirstOrDefault(n => n.Id == plcId) ?? throw new NotFoundException("This Plc does not exist.");
@@ -113,7 +110,6 @@ namespace PlcApi.Services
             _dbContext.SaveChanges();
             return id;
         }
-
         public int AddBlockToDb(int plcId, CreateBlockDto dto)
         {
 
@@ -127,11 +123,6 @@ namespace PlcApi.Services
             _dbContext.SaveChanges();
             return id;
         }
-
-
-
-
-
         public void RefreshInputsAndOutputs(Plc plc,int plcId)
         {
             if (!plc.IsConnected)
@@ -151,8 +142,6 @@ namespace PlcApi.Services
             }
 
         }
-
-        //NOWY SERWIS TYPU ELements handler, który będzie zmeniał stan utilities przy każdym evencie.
 
     }
 }
