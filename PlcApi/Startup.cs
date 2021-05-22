@@ -36,7 +36,7 @@ namespace PlcApi
             services.AddScoped<PlcModelsSeeder>();
             services.AddScoped<ExceptionHandlingMiddleware>();
             services.AddSingleton<IPlcCommunicationService, PlcCommunicationService>();
-            services.AddScoped<IPlcDataExchangeService, PlcDataExchangeService>();
+            services.AddScoped<IDatabaseService, DatabaseService>();
             services.AddScoped<IElementStatusService, ElementStatusService>();
             services.AddSwaggerGen(c =>
             {

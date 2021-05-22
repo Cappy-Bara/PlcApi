@@ -12,6 +12,10 @@ namespace PlcApi.Services
     {
         public Dictionary<int, List<Point>> Boards = new Dictionary <int, List<Point>>();
 
+        //USUWANIE PUNKTÓW ZRELACJONOWANYCH DO KONKRETNEGO OBIEKTU, PO JEGO USUNIĘCIU/UPDACIE!
+        //Eventy wymagają konkretnej instancji obiektu, to chyba zła droga!
+
+
         public List<Point> FindBoardInList(int boardId) 
         {
             if (Boards.TryGetValue(boardId, out List<Point> board))
@@ -23,6 +27,11 @@ namespace PlcApi.Services
             var board = FindBoardInList(boardId);
             board.AddRange(newPoints);
         }
+        public void CreateBoard(int boardId)
+        {
+            Boards.Add(boardId, new List<Point>());
+        }
+
 
 
 

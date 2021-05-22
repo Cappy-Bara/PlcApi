@@ -15,18 +15,18 @@ using PlcApi.Entities.Elements;
 
 namespace PlcApi.Services
 {
-    public class PlcDataExchangeService : IPlcDataExchangeService
+    public class DatabaseService : IDatabaseService
     {
-        private readonly ILogger<PlcDataExchangeService> _logger;
+        private readonly ILogger<DatabaseService> _logger;
         private readonly PlcDbContext _dbContext;
 
         //możliwe że trzeba usunąć
-        public PlcDataExchangeService()
+        public DatabaseService()
         {
 
         }
 
-        public PlcDataExchangeService(ILogger<PlcDataExchangeService> logger, PlcDbContext dbContext)
+        public DatabaseService(ILogger<DatabaseService> logger, PlcDbContext dbContext)
         {
             _logger = logger;
             _dbContext = dbContext;

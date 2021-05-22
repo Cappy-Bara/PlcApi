@@ -12,7 +12,7 @@ namespace UnitTests
 {
     public class PlcDataExchangeServiceUnitTests
     {
-        public PlcDataExchangeService _service = new PlcDataExchangeService();
+        public DatabaseService _service = new DatabaseService();
         public Plc plc = new Plc(CpuType.S71200,"127.0.0.1",0,1);
         public Plc plc1;
 

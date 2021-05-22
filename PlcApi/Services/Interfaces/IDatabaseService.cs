@@ -9,7 +9,7 @@ using S7.Net;
 
 namespace PlcApi.Services.Interfaces
 {
-    public interface IPlcDataExchangeService
+    public interface IDatabaseService
     {
         public Boolean GetSingleBit(Plc plc, int byteAddress, int bitAddress, string type);
         public void WriteSingleBit(Plc plc, int byteAddress, int bitAddress, string type, bool value);

@@ -18,12 +18,12 @@ namespace PlcApi.Controllers
     [Route("plc")]
     public class PlcCommunicationController : ControllerBase
     {
-        private readonly IPlcDataExchangeService _dataExchangeService;
+        private readonly IDatabaseService _dataExchangeService;
         private readonly IPlcCommunicationService _communicationService;
         private readonly IElementStatusService _elementsService;
         private readonly PlcDbContext _dbContext;
 
-        public PlcCommunicationController(IPlcDataExchangeService communicationService, IPlcCommunicationService dbService,
+        public PlcCommunicationController(IDatabaseService communicationService, IPlcCommunicationService dbService,
                                           IElementStatusService elementsService ,PlcDbContext dbContext)
 
         {
