@@ -18,6 +18,9 @@ namespace PlcApi.Entities
             Y = y;
         }
 
+
+
+
         public static Point stringToPoint(string pointInString)
         {
             string[] pointArray = pointInString.Split(";");

@@ -110,6 +110,17 @@ namespace PlcApi.Controllers
             return Ok(_elementsService.ReturnPlcBlocks(plcId));
         }
 
+        [HttpGet("timestamp/{plcId}")]
+        public ActionResult Timestamp([FromRoute] int plcId)
+        {
+            var plc = _communicationService.GetPlc(plcId);
+            _dataExchangeService.RefreshInputsAndOutputs(plc, plcId);
+            _elementsService.UpdateDiodesStatus();
+
+            return Ok("Some time passed");
+        }
+
+
 
     }
 }

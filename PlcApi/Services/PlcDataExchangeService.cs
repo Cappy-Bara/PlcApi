@@ -20,31 +20,53 @@ namespace PlcApi.Services
         private readonly ILogger<PlcDataExchangeService> _logger;
         private readonly PlcDbContext _dbContext;
 
+        //możliwe że trzeba usunąć
+        public PlcDataExchangeService()
+        {
+
+        }
+
         public PlcDataExchangeService(ILogger<PlcDataExchangeService> logger, PlcDbContext dbContext)
         {
             _logger = logger;
             _dbContext = dbContext;
         }
 
-
-
+        public bool checkConnection(Plc plc)
+        {
+            if (plc is null)
+                throw new MyPlcException("First start your connection with the PLC!");
+            if (!plc.IsConnected)
+                return false;
+            return true;
+        }
+        public Boolean ReadSingleBitFromPlc(Plc plc, int byteAddress, int bitAddress, string type)
+        {
+            return (Boolean)plc.Read($"{type}{byteAddress}.{bitAddress}");
+        }
+        public void WriteSingleBitToPlc(Plc plc, int byteAddress, int bitAddress, string type, bool value)
+        {
+            plc.Write($"{type}{byteAddress}.{bitAddress}", value);
+        }
+        public void ThrowLostConnection()
+        {
+            throw new MyPlcException("Connection with PLC Lost");
+        }
         public Boolean GetSingleBit(Plc plc, int byteAddress, int bitAddress, string type)
         {
-            if (plc is null)
-                throw new MyPlcException("First start your connection with the PLC!");
-            if (!plc.IsConnected)
-                throw new MyPlcException("Connection with the PLC lost");
-            else
-                return (Boolean)plc.Read($"{type}{byteAddress}.{bitAddress}");
+            var isConnected = checkConnection(plc);
+
+            if (!isConnected)
+                ThrowLostConnection();
+            return ReadSingleBitFromPlc(plc, byteAddress, bitAddress, type);
         }
-        public void WriteSingleByte(Plc plc, int byteAddress, int bitAddress, string type,bool value)
+        public void WriteSingleBit(Plc plc, int byteAddress, int bitAddress, string type,bool value)
         {
-            if (plc is null)
-                throw new MyPlcException("First start your connection with the PLC!");
+            var isConnected = checkConnection(plc);
             if (!plc.IsConnected)
-                throw new MyPlcException("Connection with the PLC lost");
+                ThrowLostConnection();
             else
-                plc.Write($"{type}{byteAddress}.{bitAddress}",value);
+                WriteSingleBitToPlc(plc, byteAddress, bitAddress, type, value);
         }
         public int AddPlcToDb(PlcEntity dto) {             //sprawdzanie czy istnieje już plc dla danego użytkownika/maila
                                                            //
@@ -112,7 +134,7 @@ namespace PlcApi.Services
         }
         public int AddBlockToDb(int plcId, CreateBlockDto dto)
         {
-
+            //Czy trzeba przehowywać bloki w db?
             Block block = new Block()
             {
                 PosX = dto.PosX,
@@ -123,6 +145,7 @@ namespace PlcApi.Services
             _dbContext.SaveChanges();
             return id;
         }
+        
         public void RefreshInputsAndOutputs(Plc plc,int plcId)
         {
             if (!plc.IsConnected)
@@ -137,11 +160,12 @@ namespace PlcApi.Services
                     _dbContext.InputsOutputs.Update(io);
                 }
                 else if (io.Type == IOType.Input)
-                    WriteSingleByte(plc, io.Byte, io.Bit, "I", io.Status);
+                    WriteSingleBit(plc, io.Byte, io.Bit, "I", io.Status);
                 _dbContext.SaveChanges();
             }
 
         }
+
 
     }
 }

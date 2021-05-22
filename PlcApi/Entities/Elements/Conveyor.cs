@@ -10,12 +10,12 @@ namespace PlcApi.Entities.Elements
 {
     public class Conveyor
     {
-        public int X { get; set; }
-        public int Y { get; set; }
-
         public bool _isVertical;
         public bool _isTurnedDownOrLeft;
         public int _length;
+
+        public int X { get; set; }
+        public int Y { get; set; }
         public bool IsVertical
         {
             get
@@ -59,6 +59,8 @@ namespace PlcApi.Entities.Elements
         public List<Point> OccupiedPoints { get; set; }
         [NotMapped]
         public List<Block> BlocksOnConveyor { get; set; }
+        public int InputOutputId { get; set; }
+        public virtual InputOutput InputOutput { get; set; }
 
         public Conveyor()
         {
@@ -72,6 +74,13 @@ namespace PlcApi.Entities.Elements
             OccupiedPoints = new List<Point>();
             BlocksOnConveyor = new List<Block>();
             Length = length;
+        }
+        public void UpdateStatus()
+        {
+            if (InputOutput.Status == true)
+                IsRunning = true;
+            else
+                IsRunning = true;
         }
         public void AddPointToList(int x, int y)
         {
@@ -103,22 +112,18 @@ namespace PlcApi.Entities.Elements
         public void MoveAllBlocks()
         {
             int sign = IsTurnedDownOrLeft ? -1 : 1;
-
-            if (IsRunning)
+            if (IsVertical)
             {
-                if (IsVertical)
+                foreach (Block block in BlocksOnConveyor)
                 {
-                    foreach (Block block in BlocksOnConveyor)
-                    {
-                        block.PosY += sign * Speed;
-                    }
+                    block.PosY += sign * Speed;
                 }
-                else
+            }
+            else
+            {
+                foreach (Block block in BlocksOnConveyor)
                 {
-                    foreach (Block block in BlocksOnConveyor)
-                    {
-                        block.PosX += sign * Speed;
-                    }
+                    block.PosX += sign * Speed;
                 }
             }
         }
@@ -143,8 +148,10 @@ namespace PlcApi.Entities.Elements
         }
         public void ConveyorWorkingScheme()
         {
+            UpdateStatus();
             RemoveBlocksNotOnConveyor();
-            MoveAllBlocks();
+            if (IsRunning)
+                MoveAllBlocks();
             RemoveBlocksNotOnConveyor();
         }
     }

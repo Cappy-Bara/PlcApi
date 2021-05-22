@@ -12,7 +12,7 @@ namespace PlcApi.Services.Interfaces
     public interface IPlcDataExchangeService
     {
         public Boolean GetSingleBit(Plc plc, int byteAddress, int bitAddress, string type);
-        public void WriteSingleByte(Plc plc, int byteAddress, int bitAddress, string type, bool value);
+        public void WriteSingleBit(Plc plc, int byteAddress, int bitAddress, string type, bool value);
         public int AddPlcToDb(PlcEntity dto);
         public int AddInputOutputToDb(int plcId, IOCreateDto IO);
         public InputOutput AddInputOutputToDb(int plcId, int bit, int myByte, IOType type);
