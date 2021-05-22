@@ -10,12 +10,36 @@ namespace PlcApi.Entities.Elements
 {
     public class Conveyor
     {
+        public int _x;
+        public int _y;
         public bool _isVertical;
         public bool _isTurnedDownOrLeft;
         public int _length;
 
-        public int X { get; set; }
-        public int Y { get; set; }
+        public int X 
+        {
+            get
+            {
+                return _x;
+            }
+            set
+            {
+                _x = value;
+                UpdateOccupiedPointsList();
+            }
+        }
+        public int Y 
+        {
+            get
+            {
+                return _y;
+            }
+            set
+            {
+                _y = value;
+                UpdateOccupiedPointsList();
+            }
+        }
         public bool IsVertical
         {
             get
@@ -75,6 +99,9 @@ namespace PlcApi.Entities.Elements
             BlocksOnConveyor = new List<Block>();
             Length = length;
         }
+
+        public event EventHandler<List<Point>> OccupiedPointsChanged; 
+
         public void UpdateStatus()
         {
             if (InputOutput.Status == true)
@@ -100,6 +127,7 @@ namespace PlcApi.Entities.Elements
                 for (int i = 0; i < Length; i++)
                     AddPointToList(X + i * sign,Y);
             }
+            OccupiedPointsChanged?.Invoke(this, OccupiedPoints);
         }
         public void AddBlockToList(Block block)
         {

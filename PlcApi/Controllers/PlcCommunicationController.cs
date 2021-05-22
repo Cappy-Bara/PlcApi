@@ -111,6 +111,7 @@ namespace PlcApi.Controllers
         }
 
         [HttpGet("timestamp/{plcId}")]
+        //to zaktualizować
         public ActionResult Timestamp([FromRoute] int plcId)
         {
             var plc = _communicationService.GetPlc(plcId);
