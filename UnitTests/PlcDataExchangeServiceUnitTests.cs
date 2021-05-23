@@ -19,14 +19,14 @@ namespace UnitTests
         [Fact]
         public void checkConnection_shouldNotConnect()
         {
-            bool isConnected = _service.checkConnection(plc);
+            bool isConnected = _service.CheckConnection(plc);
             Assert.False(isConnected);
         }
 
         [Fact]
         public void checkConnection_shouldThrowException()
         {
-            Assert.Throws<MyPlcException>(() => _service.checkConnection(plc1));
+            Assert.Throws<MyPlcException>(() => _service.CheckConnection(plc1));
         }
 
 

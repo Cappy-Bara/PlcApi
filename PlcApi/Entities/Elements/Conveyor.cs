@@ -16,6 +16,8 @@ namespace PlcApi.Entities.Elements
         public bool _isTurnedDownOrLeft;
         public int _length;
 
+        public int ConveyorId { get; set; }
+        public int BoardId { get; set; }
         public int X 
         {
             get
@@ -90,6 +92,8 @@ namespace PlcApi.Entities.Elements
         {
             OccupiedPoints = new List<Point>();
             BlocksOnConveyor = new List<Block>();
+            UpdateStatus();
+            UpdateOccupiedPointsList();
         }
         public Conveyor(int x, int y, int length, int speed)
         {
@@ -98,6 +102,8 @@ namespace PlcApi.Entities.Elements
             OccupiedPoints = new List<Point>();
             BlocksOnConveyor = new List<Block>();
             Length = length;
+            UpdateStatus();
+            UpdateOccupiedPointsList();
         }
 
         public event EventHandler<List<Point>> OccupiedPointsChanged; 

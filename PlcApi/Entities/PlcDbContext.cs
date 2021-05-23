@@ -16,6 +16,7 @@ namespace PlcApi.Entities
         public DbSet<InputOutput> InputsOutputs { get; set; }
         public DbSet<Diode> Diodes { get; set; }
         public DbSet<Block> Blocks { get; set; }
+        public DbSet<Conveyor> Conveyors { get; set; }
 
         string _connectionString = "Server=DESKTOP-R8L9JN2\\LEARNINGSQL;Database=PlcDb;Trusted_Connection=True;";
         protected override void OnModelCreating(ModelBuilder modelBuilder)

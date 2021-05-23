@@ -5,15 +5,18 @@ using System.Text;
 using System.Threading.Tasks;
 using PlcApi.Entities;
 using PlcApi.Exceptions;
+using PlcApi.Services.Interfaces;
 
 namespace PlcApi.Services
 {
-    public class BoardService
+    public class BoardService :IBoardService
     {
         public Dictionary<int, List<Point>> Boards = new Dictionary <int, List<Point>>();
 
         //USUWANIE PUNKTÓW ZRELACJONOWANYCH DO KONKRETNEGO OBIEKTU, PO JEGO USUNIĘCIU/UPDACIE!
         //Eventy wymagają konkretnej instancji obiektu, to chyba zła droga!
+        //Event handler w dbContext, który wywołuje tu metodę!
+        //musi być blokada do tworzenia obiektów na sobie. Database?
 
 
         public List<Point> FindBoardInList(int boardId) 
@@ -32,6 +35,11 @@ namespace PlcApi.Services
             Boards.Add(boardId, new List<Point>());
         }
 
+        public void SizeModified()
+        {
+            ;
+        }
+        
 
 
 
