@@ -17,6 +17,7 @@ namespace PlcApi.Entities
         public DbSet<Diode> Diodes { get; set; }
         public DbSet<Block> Blocks { get; set; }
         public DbSet<Conveyor> Conveyors { get; set; }
+        public DbSet<ConveyorPoint> ConveyorPoints { get; set; }
 
         string _connectionString = "Server=DESKTOP-R8L9JN2\\LEARNINGSQL;Database=PlcDb;Trusted_Connection=True;";
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -31,7 +32,6 @@ namespace PlcApi.Entities
             modelBuilder.Entity<InputOutput>()
                 .Property(i => i.PlcId)
                 .IsRequired();
-
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

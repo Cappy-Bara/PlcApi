@@ -3,7 +3,7 @@ using S7.Net;
 
 namespace PlcApi.Services
 {
-    public interface IPlcCommunicationService
+    public interface IPlcStorageService
     {
 
         public void AddPlc(int plcId, string ip, PlcModel model);

@@ -19,19 +19,15 @@ namespace PlcApi.Services
     {
         private readonly ILogger<DatabaseService> _logger;
         private readonly PlcDbContext _dbContext;
-        private readonly BoardService _boardService;
         
-
-        //możliwe że trzeba usunąć
         public DatabaseService()
         {
 
         }
-        public DatabaseService(ILogger<DatabaseService> logger, PlcDbContext dbContext, BoardService boardService)
+        public DatabaseService(ILogger<DatabaseService> logger, PlcDbContext dbContext)
         {
             _logger = logger;
             _dbContext = dbContext;
-            _boardService = boardService;
         }
 
         public bool CheckConnection(Plc plc)
@@ -76,6 +72,26 @@ namespace PlcApi.Services
             _dbContext.SaveChanges();
             return addedValue.Id;
         }
+        public void RefreshInputsAndOutputs(Plc plc, int plcId)
+        {
+            if (!plc.IsConnected)
+                throw new MyPlcException("No connection with PLC.");
+
+            List<InputOutput> IOList = _dbContext.InputsOutputs.Where(n => n.PlcId == plcId).ToList();
+            foreach (InputOutput io in IOList)
+            {
+                if (io.Type == IOType.Output)
+                {
+                    io.Status = GetSingleBit(plc, io.Byte, io.Bit, "Q");
+                    _dbContext.InputsOutputs.Update(io);
+                }
+                else if (io.Type == IOType.Input)
+                    WriteSingleBit(plc, io.Byte, io.Bit, "I", io.Status);
+                _dbContext.SaveChanges();
+            }
+
+        }
+
         public int AddInputOutputToDb(int plcId, IOCreateDto dto)
         {
             var plc = _dbContext.PLCs.FirstOrDefault(n => n.Id == plcId) ?? throw new NotFoundException("This Plc does not exist.");
@@ -111,16 +127,26 @@ namespace PlcApi.Services
             _dbContext.SaveChanges();
             return addedValue;
         }
-        public InputOutput FindInputOutputInDb(int plcId, int ioByte,int ioBit, IOType type)
+        public InputOutput FindInputOutputInDb(int plcId, int ioByte, int ioBit, IOType type)
         {
-                    return _dbContext.InputsOutputs.FirstOrDefault(
-                    n => n.PlcId == plcId &&
-                    n.Bit == ioBit &&
-                    n.Byte == ioByte &&
-                    n.Type == type
-                    );
+            return _dbContext.InputsOutputs.FirstOrDefault(
+            n => n.PlcId == plcId &&
+            n.Bit == ioBit &&
+            n.Byte == ioByte &&
+            n.Type == type
+            );
         }
 
+        //Do innego serwisu
+
+        public ConveyorPoint FindConveyorPoint(int boardId, int x, int y)
+        {
+            return _dbContext.ConveyorPoints.FirstOrDefault(n =>
+            n.BoardId == boardId &&
+            n.X == x &&
+            n.Y == y
+            );
+        }
 
 
         public int AddDiodeToDb(int plcId, CreateDiodeDto dto)      //REFACTOR!
@@ -163,38 +189,26 @@ namespace PlcApi.Services
             if (io == null)
                 io = AddInputOutputToDb(plcId, dto.OutputBit, dto.OutputByte, IOType.Output);
 
-            Conveyor conveyor = new Conveyor(dto.X, dto.Y, dto.Length, dto.Speed)
+            var startPoint = FindConveyorPoint(dto.BoardId, dto.X, dto.Y);
+            if (startPoint != null)
+                throw new Exception("Conveyor collides with something!");
+
+            startPoint = new ConveyorPoint(dto.X,dto.Y,dto.BoardId);
+
+            Conveyor conveyor = new Conveyor(startPoint, dto.Length, dto.Speed)
             {
                 IsTurnedDownOrLeft = dto.IsTurnedDownOrLeft,
                 IsVertical = dto.IsVertical,
-                InputOutput = io,
                 InputOutputId = io.Id,
                 BoardId = dto.BoardId
             };
 
-            var id = _dbContext.Conveyors.Add(conveyor).Entity.ConveyorId;
+            var conveyorId = _dbContext.Conveyors.Add(conveyor).Entity.ConveyorId;
+            var occupiedPoints = conveyor.ReturnOccupiedPoints();
+            occupiedPoints.First().isMainPoint = true;
+            _dbContext.ConveyorPoints.AddRange(occupiedPoints);
             _dbContext.SaveChanges();
-            _boardService.AddPointsToBoard(conveyor.BoardId,conveyor.OccupiedPoints);
-            return id;
-        }
-        public void RefreshInputsAndOutputs(Plc plc,int plcId)
-        {
-            if (!plc.IsConnected)
-                throw new MyPlcException("No connection with PLC.");
-
-            List<InputOutput> IOList = _dbContext.InputsOutputs.Where(n => n.PlcId == plcId).ToList();
-            foreach(InputOutput io in IOList)
-            {
-                if (io.Type == IOType.Output)
-                {
-                    io.Status = GetSingleBit(plc, io.Byte, io.Bit, "Q");
-                    _dbContext.InputsOutputs.Update(io);
-                }
-                else if (io.Type == IOType.Input)
-                    WriteSingleBit(plc, io.Byte, io.Bit, "I", io.Status);
-                _dbContext.SaveChanges();
-            }
-
+            return conveyorId;
         }
 
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,34 +9,20 @@ namespace PlcApi.Entities
 {
     public class Point
     {
+        public int Id { get; set; }
         public int X { get; set; }
         public int Y { get; set; }
+        public int BoardId { get; set; }
+
+
 
         public Point() { }
-        public Point(int x, int y)
+        public Point(int x, int y, int boardId)
         {
             X = x;
             Y = y;
+            BoardId = boardId;
         }
-
-
-
-
-        public static Point stringToPoint(string pointInString)
-        {
-            string[] pointArray = pointInString.Split(";");
-            int x = int.Parse(pointArray[0]);
-            int y = int.Parse(pointArray[0]);
-            return new Point(x,y);
-        }
-
-        public override string ToString()
-        {
-            return $"{X};{Y}";
-        }
-    
-
-
 
     }
 

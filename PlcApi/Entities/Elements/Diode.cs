@@ -28,17 +28,6 @@ namespace PlcApi.Entities
             else
                 Status = "Off";
         }
-
-
-
-
-
-
-
-
-
-
-
     }
 
 

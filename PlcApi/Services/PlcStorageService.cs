@@ -9,7 +9,7 @@ using S7.Net;
 
 namespace PlcApi.Services
 {
-    public class PlcCommunicationService :IPlcCommunicationService
+    public class PlcStorageService :IPlcStorageService
     {
         public Dictionary<int,Plc> Plcs = new Dictionary<int, Plc>();
 

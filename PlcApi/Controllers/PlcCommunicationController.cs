@@ -19,11 +19,11 @@ namespace PlcApi.Controllers
     public class PlcCommunicationController : ControllerBase
     {
         private readonly IDatabaseService _dataExchangeService;
-        private readonly IPlcCommunicationService _communicationService;
+        private readonly IPlcStorageService _communicationService;
         private readonly IElementStatusService _elementsService;
         private readonly PlcDbContext _dbContext;
 
-        public PlcCommunicationController(IDatabaseService communicationService, IPlcCommunicationService dbService,
+        public PlcCommunicationController(IDatabaseService communicationService, IPlcStorageService dbService,
                                           IElementStatusService elementsService ,PlcDbContext dbContext)
 
         {
@@ -63,7 +63,7 @@ namespace PlcApi.Controllers
         [HttpPost("{plcId}/IO")]
         public ActionResult CreateIO([FromRoute]int plcId, [FromBody] IOCreateDto dto)
         { 
-            _dataExchangeService.AddInputOutputToDb(plcId,dto);
+            //_dataExchangeService.AddInputOutputToDb(plcId,dto);
             return Ok("I/O Created");
         }
 
