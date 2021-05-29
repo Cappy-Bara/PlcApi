@@ -14,6 +14,7 @@ using Microsoft.OpenApi.Models;
 using PlcApi.Entities;
 using PlcApi.Middleware;
 using PlcApi.Services;
+using PlcApi.Services.EntityServices;
 using PlcApi.Services.Interfaces;
 
 namespace PlcApi
@@ -38,6 +39,7 @@ namespace PlcApi
             services.AddSingleton<IPlcStorageService, PlcStorageService>();
             services.AddScoped<IDatabaseService, DatabaseService>();
             services.AddScoped<IElementStatusService, ElementStatusService>();
+            services.AddScoped<IInputOutputService, InputOutputService>();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "PlcApi", Version = "v1" });

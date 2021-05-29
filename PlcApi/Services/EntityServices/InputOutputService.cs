@@ -5,10 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using PlcApi.Entities;
+using PlcApi.Exceptions;
+using PlcApi.Models;
+using PlcApi.Services.Interfaces;
 
 namespace PlcApi.Services.EntityServices
 {
-    public class InputOutputService
+    public class InputOutputService : IInputOutputService
     {
         private readonly ILogger<InputOutputService> _logger;
         private readonly PlcDbContext _dbContext;
@@ -19,7 +22,7 @@ namespace PlcApi.Services.EntityServices
             _dbContext = dbContext;
         }
 
-        /*
+        
         public int AddInputOutputToDb(int plcId, IOCreateDto dto)
         {
             var plc = _dbContext.PLCs.FirstOrDefault(n => n.Id == plcId) ?? throw new NotFoundException("This Plc does not exist.");
@@ -64,13 +67,5 @@ namespace PlcApi.Services.EntityServices
             n.Type == type
             );
         }
-
-        */
-
-
-
-
-
-
     }
 }

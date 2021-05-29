@@ -19,15 +19,21 @@ namespace PlcApi.Services
     {
         private readonly ILogger<DatabaseService> _logger;
         private readonly PlcDbContext _dbContext;
-        
+        private readonly IInputOutputService _ioService;
+        private readonly IPlcStorageService _plcService;
+
+
         public DatabaseService()
         {
 
         }
-        public DatabaseService(ILogger<DatabaseService> logger, PlcDbContext dbContext)
+        public DatabaseService(ILogger<DatabaseService> logger, PlcDbContext dbContext, IInputOutputService ioService, IPlcStorageService plcService)
         {
             _logger = logger;
             _dbContext = dbContext;
+            _ioService = ioService;
+            _plcService = plcService;           //DA SIE TU WSTRZYKNĄĆ TEN SERWIS, CO ZAŁATWIA WIELE!!!
+
         }
 
         public bool CheckConnection(Plc plc)
@@ -91,7 +97,6 @@ namespace PlcApi.Services
             }
 
         }
-
         public int AddInputOutputToDb(int plcId, IOCreateDto dto)
         {
             var plc = _dbContext.PLCs.FirstOrDefault(n => n.Id == plcId) ?? throw new NotFoundException("This Plc does not exist.");
@@ -185,9 +190,10 @@ namespace PlcApi.Services
         }
         public int AddConveyorToDb(int plcId, CreateConveyorDto dto)
         {
-            var io = FindInputOutputInDb(plcId, dto.OutputByte, dto.OutputBit, IOType.Output);
+            
+            var io = _ioService.FindInputOutputInDb(plcId, dto.OutputByte, dto.OutputBit, IOType.Output);
             if (io == null)
-                io = AddInputOutputToDb(plcId, dto.OutputBit, dto.OutputByte, IOType.Output);
+                io = _ioService.AddInputOutputToDb(plcId, dto.OutputBit, dto.OutputByte, IOType.Output);
 
             var startPoint = FindConveyorPoint(dto.BoardId, dto.X, dto.Y);
             if (startPoint != null)
