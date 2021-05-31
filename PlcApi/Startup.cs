@@ -38,8 +38,12 @@ namespace PlcApi
             services.AddScoped<ExceptionHandlingMiddleware>();
             services.AddSingleton<IPlcStorageService, PlcStorageService>();
             services.AddScoped<IDatabaseService, DatabaseService>();
-            services.AddScoped<IElementStatusService, ElementStatusService>();
+            services.AddScoped<IPlcConnectionService, PlcConnectionService>();
+            services.AddScoped<IPlcDataReadingService, PlcDataReadingService>();
             services.AddScoped<IInputOutputService, InputOutputService>();
+            services.AddScoped<IDiodeService, DiodeService>();
+            services.AddScoped<IConveyorService, ConveyorService>();
+            services.AddScoped<IPlcDataWritingService, PlcDataWritingService>();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "PlcApi", Version = "v1" });

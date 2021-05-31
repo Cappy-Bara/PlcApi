@@ -8,6 +8,7 @@ using PlcApi.Entities;
 using PlcApi.Exceptions;
 using PlcApi.Models;
 using PlcApi.Services.Interfaces;
+using S7.Net;
 
 namespace PlcApi.Services.EntityServices
 {
@@ -15,14 +16,21 @@ namespace PlcApi.Services.EntityServices
     {
         private readonly ILogger<InputOutputService> _logger;
         private readonly PlcDbContext _dbContext;
+        private readonly IPlcStorageService _plcStorageService;
+        private readonly IPlcDataReadingService _getPlcDataService;
+        private readonly IPlcDataWritingService _writePlcDataService;
 
-        public InputOutputService(ILogger<InputOutputService> logger, PlcDbContext dbContext)
+        public InputOutputService(ILogger<InputOutputService> logger, PlcDbContext dbContext, IPlcStorageService plcStorageService,
+            IPlcDataReadingService readValueService, IPlcDataWritingService writeValueService)
         {
             _logger = logger;
             _dbContext = dbContext;
+            _plcStorageService = plcStorageService;
+            _getPlcDataService = readValueService;
+            _writePlcDataService = writeValueService;
         }
 
-        
+
         public int AddInputOutputToDb(int plcId, IOCreateDto dto)
         {
             var plc = _dbContext.PLCs.FirstOrDefault(n => n.Id == plcId) ?? throw new NotFoundException("This Plc does not exist.");
@@ -66,6 +74,24 @@ namespace PlcApi.Services.EntityServices
             n.Byte == ioByte &&
             n.Type == type
             );
+        }
+        public void RefreshInputsAndOutputs(int plcId)
+        {
+            var plc = _plcStorageService.GetPlc(plcId);
+
+            List<InputOutput> IOList = _dbContext.InputsOutputs.Where(n => n.PlcId == plcId).ToList();
+            foreach (InputOutput io in IOList)
+            {
+                if (io.Type == IOType.Output)
+                {
+                    io.Status = _getPlcDataService.GetSingleBitStatus(plc, io.Byte, io.Bit, "Q");
+                    _dbContext.InputsOutputs.Update(io);
+                }
+                else if (io.Type == IOType.Input)
+                    _writePlcDataService.WriteSingleBit(plc, io.Byte, io.Bit, "I", io.Status);
+                _dbContext.SaveChanges();
+            }
+
         }
     }
 }

@@ -20,24 +20,30 @@ namespace PlcApi.Controllers
     {
         private readonly IDatabaseService _dataExchangeService;
         private readonly IPlcStorageService _communicationService;
-        private readonly IElementStatusService _elementsService;
         private readonly PlcDbContext _dbContext;
+        private readonly IInputOutputService _ioService;
+        private readonly IPlcDataReadingService _readingService;
+        private readonly IConveyorService _conveyorService;
+        private readonly IDiodeService _diodeService;
 
-        public PlcCommunicationController(IDatabaseService communicationService, IPlcStorageService dbService,
-                                          IElementStatusService elementsService ,PlcDbContext dbContext)
+        public PlcCommunicationController(IDatabaseService communicationService, IPlcStorageService dbService, PlcDbContext dbContext,
+            IPlcDataReadingService readingService, IInputOutputService ioService, IConveyorService conveyorService, IDiodeService diodeService)
 
         {
             _dataExchangeService = communicationService;
             _communicationService = dbService;
+            _ioService = ioService;
+            _readingService = readingService;
+            _conveyorService = conveyorService;
+            _diodeService = diodeService;
             _dbContext = dbContext;
-            _elementsService = elementsService;
         }
 
         [HttpGet("{plcId}/{byteAddress}/{bitAddress}")]
         public ActionResult getSingleOutputState([FromRoute] int plcId, [FromRoute] int byteAddress, [FromRoute] int bitAddress)
         {
             var plc = _communicationService.GetPlc(plcId);
-            return Ok(_dataExchangeService.GetSingleBit(plc, byteAddress, bitAddress,"Q"));
+            return Ok(_readingService.GetSingleBitStatus(plc, byteAddress, bitAddress,"Q"));
         }
 
         [HttpPost("communication/{plcId}")]
@@ -48,6 +54,7 @@ namespace PlcApi.Controllers
         }
 
         [HttpPost]
+        //TO EDYTOWAĆ
         public ActionResult CreatePlc([FromBody] PlcEntity dto)
         {
             int model = dto.ModelId;
@@ -58,42 +65,34 @@ namespace PlcApi.Controllers
             int id = _dataExchangeService.AddPlcToDb(dto);
             _communicationService.AddPlc(id, dto.Ip, plcModel);
             return Ok("Plc Created.");
-        }
+        }   //poprawić
 
         [HttpPost("{plcId}/IO")]
         public ActionResult CreateIO([FromRoute]int plcId, [FromBody] IOCreateDto dto)
-        { 
-            //_dataExchangeService.AddInputOutputToDb(plcId,dto);
+        {
+            _ioService.AddInputOutputToDb(plcId, dto);
             return Ok("I/O Created");
         }
 
         [HttpPost("{plcId}/Diode")]
         public ActionResult CreateDiode([FromRoute] int plcId, [FromBody] CreateDiodeDto dto)
         {
-            _dataExchangeService.AddDiodeToDb(plcId, dto);
+            _diodeService.AddDiodeToDb(plcId, dto);
             return Ok("Diode created");
         }
-
-        [HttpPost("{plcId}/Block")]
-        public ActionResult CreateBlock([FromRoute] int plcId, [FromBody] CreateBlockDto dto)
-        {
-            _dataExchangeService.AddBlockToDb(plcId, dto);
-            return Ok("Block created");
-        }
-
 
         [HttpPut("{plcId}")]
         public ActionResult RefreshIOStatus([FromRoute]int plcId)
         {
-            _dataExchangeService.RefreshInputsAndOutputs(_communicationService.GetPlc(plcId), plcId);
+            _ioService.RefreshInputsAndOutputs(plcId);
             return Ok("Refreshed.");
         }
 
 
-        [HttpPut("refresh")]
-        public ActionResult RefreshElementsState()
+        [HttpPut("{plcId}/Diode")]
+        public ActionResult RefreshElementsState([FromRoute] int plcId)
         {
-            _elementsService.UpdateDiodesStatus();
+            _diodeService.RefreshDiodesStatus(plcId);
             return Ok("Diode Status Refreshed");
         }
 
@@ -101,13 +100,7 @@ namespace PlcApi.Controllers
         [HttpGet("{plcId}/Diode")]
         public ActionResult<List<Diode>> GetDiodesStatus([FromRoute] int plcId)
         {
-            return Ok(_elementsService.ReturnPlcDiodes(plcId));
-        }
-
-        [HttpGet("{plcId}/Block")]
-        public ActionResult<List<Block>> GetBlockStatus([FromRoute] int plcId)
-        {
-            return Ok(_elementsService.ReturnPlcBlocks(plcId));
+            return Ok(_diodeService.ReturnPlcDiodes(plcId));
         }
 
         [HttpGet("timestamp/{plcId}")]
@@ -115,8 +108,8 @@ namespace PlcApi.Controllers
         public ActionResult Timestamp([FromRoute] int plcId)
         {
             var plc = _communicationService.GetPlc(plcId);
-            _dataExchangeService.RefreshInputsAndOutputs(plc, plcId);
-            _elementsService.UpdateDiodesStatus();
+            _ioService.RefreshInputsAndOutputs(plcId);
+            _diodeService.RefreshDiodesStatus(plcId);
 
             return Ok("Some time passed");
         }

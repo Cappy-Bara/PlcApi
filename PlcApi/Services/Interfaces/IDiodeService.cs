@@ -4,15 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using PlcApi.Entities;
-using PlcApi.Entities.Elements;
 using PlcApi.Models;
 
 namespace PlcApi.Services.Interfaces
 {
-    public interface IElementStatusService
+    public interface IDiodeService
     {
-        public void UpdateDiodesStatus();
+        public int AddDiodeToDb(int plcId, CreateDiodeDto dto);
+        public void RefreshDiodesStatus(int plcId);
         public List<Diode> ReturnPlcDiodes(int plcId);
-        public List<Block> ReturnPlcBlocks(int plcId);
     }
 }
