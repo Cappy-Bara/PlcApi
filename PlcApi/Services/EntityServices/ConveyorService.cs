@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using PlcApi.Entities;
@@ -17,17 +18,19 @@ namespace PlcApi.Services.EntityServices
         private readonly ILogger<ConveyorService> _logger;
         private readonly PlcDbContext _dbContext;
         private readonly IInputOutputService _ioService;
+        private readonly IMapper _mapper;
 
-        public ConveyorService(ILogger<ConveyorService> logger, PlcDbContext dbContext, IInputOutputService ioService)
+        public ConveyorService(ILogger<ConveyorService> logger, PlcDbContext dbContext, IInputOutputService ioService,
+            IMapper mapper)
         {
             _logger = logger;
             _dbContext = dbContext;
             _ioService = ioService;
-
+            _mapper = mapper;
         }
 
 
-        public int AddConveyorToDb(int plcId, CreateConveyorDto dto)
+        public int AddConveyorToDb(int plcId, ConveyorDto dto)
         {
 
             var io = _ioService.FindInputOutputInDb(plcId, dto.OutputByte, dto.OutputBit, IOType.Output);
@@ -37,30 +40,31 @@ namespace PlcApi.Services.EntityServices
             var startPoint = FindConveyorPoint(dto.BoardId, dto.X, dto.Y);
             if (startPoint != null)
                 throw new Exception("Conveyor collides with something!");
-
             startPoint = new ConveyorPoint(dto.X, dto.Y, dto.BoardId);
-
+            startPoint.isMainPoint = true;
             Conveyor conveyor = new Conveyor(startPoint, dto.Length, dto.Speed)
             {
                 IsTurnedDownOrLeft = dto.IsTurnedDownOrLeft,
                 IsVertical = dto.IsVertical,
                 InputOutputId = io.Id,
-                BoardId = dto.BoardId
+                BoardId = dto.BoardId,
+                StartPoint = startPoint,
             };
-
-            var conveyorId = _dbContext.Conveyors.Add(conveyor).Entity.ConveyorId;
+            conveyor = _dbContext.Conveyors.Add(conveyor).Entity;
+            _dbContext.SaveChanges();
             var occupiedPoints = conveyor.ReturnOccupiedPoints();
 
-            foreach(ConveyorPoint occupiedPoint in occupiedPoints)
+
+            foreach (ConveyorPoint occupiedPoint in occupiedPoints)
             {
-                var Point = FindConveyorPoint(dto.BoardId, occupiedPoint.X, occupiedPoint.Y);
-                if (startPoint != null)
+                var point = FindConveyorPoint(dto.BoardId, occupiedPoint.X, occupiedPoint.Y);
+                if (point != null)
                     throw new Exception("Conveyor collides with something!");
             }
-            occupiedPoints.First().isMainPoint = true;
+            occupiedPoints.FirstOrDefault(n => n.X == startPoint.X && n.Y == startPoint.Y).isMainPoint = true;
             _dbContext.ConveyorPoints.AddRange(occupiedPoints);
             _dbContext.SaveChanges();
-            return conveyorId;
+            return conveyor.ConveyorId;
         }
         public ConveyorPoint FindConveyorPoint(int boardId, int x, int y)
         {
@@ -70,8 +74,6 @@ namespace PlcApi.Services.EntityServices
             n.Y == y
             );
         }
-
-        //zmienić na user id?
         public void RefreshConveyorsStatus(int boardId)
         {
             foreach (Conveyor conveyor in _dbContext.Conveyors.Include(n => n.InputOutput).Where(n => n.BoardId == boardId))
@@ -83,8 +85,11 @@ namespace PlcApi.Services.EntityServices
             conveyor.UpdateStatus();
             _dbContext.Conveyors.Update(conveyor);
         }
-
-
-
+        public List<ConveyorDto> ConveyorsOnBoard(int boardId)
+        {
+            List<ConveyorDto> output = new List<ConveyorDto>();
+            var conveyors = _dbContext.Conveyors.Where(n => n.BoardId == boardId);
+            return _mapper.Map<List<ConveyorDto>>(conveyors);
+        }
     }
 }

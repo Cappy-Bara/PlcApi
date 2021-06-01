@@ -40,7 +40,7 @@ namespace PlcApi.Controllers
         }
 
         [HttpGet("{plcId}/{byteAddress}/{bitAddress}")]
-        public ActionResult getSingleOutputState([FromRoute] int plcId, [FromRoute] int byteAddress, [FromRoute] int bitAddress)
+        public ActionResult GetSingleOutputState([FromRoute] int plcId, [FromRoute] int byteAddress, [FromRoute] int bitAddress)
         {
             var plc = _communicationService.GetPlc(plcId);
             return Ok(_readingService.GetSingleBitStatus(plc, byteAddress, bitAddress,"Q"));
@@ -90,18 +90,42 @@ namespace PlcApi.Controllers
 
 
         [HttpPut("{plcId}/Diode")]
-        public ActionResult RefreshElementsState([FromRoute] int plcId)
+        public ActionResult RefreshDiodesState([FromRoute] int plcId)
         {
             _diodeService.RefreshDiodesStatus(plcId);
             return Ok("Diode Status Refreshed");
         }
-
 
         [HttpGet("{plcId}/Diode")]
         public ActionResult<List<Diode>> GetDiodesStatus([FromRoute] int plcId)
         {
             return Ok(_diodeService.ReturnPlcDiodes(plcId));
         }
+
+        [HttpPost("{plcId}/Conveyor")]
+        public ActionResult CreateConveyor([FromRoute] int plcId, [FromBody] ConveyorDto dto)
+        {
+            _conveyorService.AddConveyorToDb(plcId, dto);
+            return Ok();
+        }
+
+        [HttpPut("{plcId}/Conveyor/{boardId}")]
+        public ActionResult RefreshConveyorState([FromRoute] int plcId, [FromRoute] int boardId )
+        {
+            _conveyorService.RefreshConveyorsStatus(boardId);
+            return Ok();
+        }
+
+        [HttpGet("{plcId}/Conveyor/{boardId}")]
+        public ActionResult<List<ConveyorDto>> GetConveyorsOnBoard([FromRoute] int plcId, [FromRoute] int boardId )
+        {
+            return Ok(_conveyorService.ConveyorsOnBoard(boardId));
+        }
+
+
+
+
+
 
         [HttpGet("timestamp/{plcId}")]
         //to zaktualizować

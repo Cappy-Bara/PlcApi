@@ -7,12 +7,13 @@ using System.Threading.Tasks;
 
 namespace PlcApi.Entities.Elements
 {
-    public class Block
+    public class Pallet
     {
-        public int BlockId { get; set; }
+        public int PalletId { get; set; }
         public int PosX { get; set; }
         public int PosY { get; set; }
-        public int PlcId { get; set; }
-        public virtual PlcEntity Plc { get; set; }
+        public int BoardId { get; set; }
+        public int ConveyorId { get; set; }
+        public virtual Conveyor Conveyor { get; set; }
     }
 }

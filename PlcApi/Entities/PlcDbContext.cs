@@ -15,7 +15,7 @@ namespace PlcApi.Entities
         public DbSet<PlcModel> Models { get; set; } 
         public DbSet<InputOutput> InputsOutputs { get; set; }
         public DbSet<Diode> Diodes { get; set; }
-        public DbSet<Block> Blocks { get; set; }
+        public DbSet<Pallet> Pallets { get; set; }
         public DbSet<Conveyor> Conveyors { get; set; }
         public DbSet<ConveyorPoint> ConveyorPoints { get; set; }
 

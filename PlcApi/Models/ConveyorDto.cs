@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PlcApi.Models
 {
-    public class CreateConveyorDto
+    public class ConveyorDto
     {
         public int X { get; set; }
         public int Y { get; set; }

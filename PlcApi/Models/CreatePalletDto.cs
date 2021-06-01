@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace PlcApi.Models
 {
-    public class CreateBlockDto
+    public class CreatePalletDto
     {
         public int PosX { get; set; }
         public int PosY { get; set; }
+        public int BoardId { get; set; }
     }
 }

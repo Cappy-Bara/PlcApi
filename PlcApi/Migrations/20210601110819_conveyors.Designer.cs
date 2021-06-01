@@ -2,15 +2,17 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlcApi.Entities;
 
 namespace PlcApi.Migrations
 {
     [DbContext(typeof(PlcDbContext))]
-    partial class PlcDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210601110819_conveyors")]
+    partial class conveyors
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -46,7 +48,7 @@ namespace PlcApi.Migrations
 
             modelBuilder.Entity("PlcApi.Entities.Elements.Conveyor", b =>
                 {
-                    b.Property<int>("ConveyorId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
@@ -72,7 +74,7 @@ namespace PlcApi.Migrations
                     b.Property<int>("Speed")
                         .HasColumnType("int");
 
-                    b.HasKey("ConveyorId");
+                    b.HasKey("Id");
 
                     b.HasIndex("InputOutputId");
 
@@ -131,7 +133,7 @@ namespace PlcApi.Migrations
 
                     b.HasIndex("ConveyorId");
 
-                    b.ToTable("Pallets");
+                    b.ToTable("Blocks");
                 });
 
             modelBuilder.Entity("PlcApi.Entities.InputOutput", b =>

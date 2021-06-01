@@ -21,6 +21,7 @@ namespace PlcApi.Entities.Elements
         }
         public ConveyorPoint(int x, int y, int BoardId) : base(x, y, BoardId)
         {
+            isMainPoint = true;
         }
         public ConveyorPoint(int x, int y, int BoardId,int conveyorId) : base(x, y, BoardId)
         {

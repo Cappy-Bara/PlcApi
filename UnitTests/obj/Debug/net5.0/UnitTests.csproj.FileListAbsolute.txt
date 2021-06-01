@@ -140,3 +140,8 @@ D:\Studia\sem6\PP\PlcApi\UnitTests\obj\Debug\net5.0\UnitTests.dll
 D:\Studia\sem6\PP\PlcApi\UnitTests\obj\Debug\net5.0\ref\UnitTests.dll
 D:\Studia\sem6\PP\PlcApi\UnitTests\obj\Debug\net5.0\UnitTests.pdb
 D:\Studia\sem6\PP\PlcApi\UnitTests\obj\Debug\net5.0\UnitTests.genruntimeconfig.cache
+D:\Studia\sem6\PP\PlcApi\UnitTests\bin\Debug\net5.0\AutoMapper.dll
+D:\Studia\sem6\PP\PlcApi\UnitTests\bin\Debug\net5.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
+D:\Studia\sem6\PP\PlcApi\UnitTests\bin\Debug\net5.0\FluentValidation.dll
+D:\Studia\sem6\PP\PlcApi\UnitTests\bin\Debug\net5.0\FluentValidation.AspNetCore.dll
+D:\Studia\sem6\PP\PlcApi\UnitTests\bin\Debug\net5.0\FluentValidation.DependencyInjectionExtensions.dll

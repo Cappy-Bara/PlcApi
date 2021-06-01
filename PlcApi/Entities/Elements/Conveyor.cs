@@ -10,31 +10,16 @@ namespace PlcApi.Entities.Elements
 {
     public class Conveyor
     {
-        private ConveyorPoint _mainPoint;
-
         public int ConveyorId { get; set; }
         public int BoardId { get; set; }
-        [NotMapped]
-        public ConveyorPoint StartPoint 
-        {
-            get
-            {
-                return OccupiedPoints.FirstOrDefault(n => n.isMainPoint == true);
-            }
-
-            set
-            {
-                _mainPoint = value;
-            }
-
-        }
+        public ConveyorPoint StartPoint { get; set; }
         public bool IsVertical { get; set; }
         public bool IsTurnedDownOrLeft { get; set; }
         public int Length { get; set; }
         public int Speed { get; set; }
         public bool IsRunning { get; set; }
         public virtual List<ConveyorPoint> OccupiedPoints { get; set; }
-        public virtual List<Block> BlocksOnConveyor { get; set; }
+        public virtual List<Pallet> PalletsOnConveyor { get; set; }
         public int InputOutputId { get; set; }
         public virtual InputOutput InputOutput { get; set; }
 
@@ -43,7 +28,6 @@ namespace PlcApi.Entities.Elements
             mainPoint.isMainPoint = true;
             StartPoint = mainPoint;
             Length = length;
-            UpdateStatus();
         }
         public Conveyor()
         {
@@ -70,38 +54,39 @@ namespace PlcApi.Entities.Elements
                 for (int i = 0; i < Length; i++)
                     output.Add(new ConveyorPoint(StartPoint.X + i * sign, StartPoint.Y, BoardId, ConveyorId));
             }
+            output.FirstOrDefault().isMainPoint = true;
             return output;
         }
 
 
 
-        public void AddBlockToList(Block block)
+        public void AddBlockToList(Pallet block)
         {
-            BlocksOnConveyor.Add(block);
+            PalletsOnConveyor.Add(block);
         }
-        public void RemoveBlockFromList(Block block)
+        public void RemoveBlockFromList(Pallet block)
         {
-            BlocksOnConveyor.Remove(block);
+            PalletsOnConveyor.Remove(block);
         }
         public void MoveAllBlocks()
         {
             int sign = IsTurnedDownOrLeft ? -1 : 1;
             if (IsVertical)
             {
-                foreach (Block block in BlocksOnConveyor)
+                foreach (Pallet block in PalletsOnConveyor)
                 {
                     block.PosY += sign * Speed;
                 }
             }
             else
             {
-                foreach (Block block in BlocksOnConveyor)
+                foreach (Pallet block in PalletsOnConveyor)
                 {
                     block.PosX += sign * Speed;
                 }
             }
         }
-        public bool CheckIfBlockOnConveyor(Block block)
+        public bool CheckIfBlockOnConveyor(Pallet block)
         {
             if (OccupiedPoints.Contains(
                 new Point
@@ -114,10 +99,10 @@ namespace PlcApi.Entities.Elements
         }
         public void RemoveBlocksNotOnConveyor()
         {
-            foreach (Block block in BlocksOnConveyor)
+            foreach (Pallet block in PalletsOnConveyor)
             {
                 if (CheckIfBlockOnConveyor(block))
-                    BlocksOnConveyor.Remove(block);
+                    PalletsOnConveyor.Remove(block);
             }
         }
         public void ConveyorWorkingScheme()

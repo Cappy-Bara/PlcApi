@@ -34,6 +34,7 @@ namespace PlcApi
 
             services.AddControllers();
             services.AddDbContext<PlcDbContext>();
+            services.AddAutoMapper(this.GetType().Assembly);
             services.AddScoped<PlcModelsSeeder>();
             services.AddScoped<ExceptionHandlingMiddleware>();
             services.AddSingleton<IPlcStorageService, PlcStorageService>();
