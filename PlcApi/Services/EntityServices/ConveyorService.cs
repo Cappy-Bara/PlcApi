@@ -88,7 +88,9 @@ namespace PlcApi.Services.EntityServices
         public List<ConveyorDto> ConveyorsOnBoard(int boardId)
         {
             List<ConveyorDto> output = new List<ConveyorDto>();
-            var conveyors = _dbContext.Conveyors.Where(n => n.BoardId == boardId);
+            var conveyors = _dbContext.Conveyors.Where(n => n.BoardId == boardId).Include(n => n.OccupiedPoints).Include(m => m.InputOutput);
+            foreach (Conveyor conveyor in conveyors)
+                conveyor.StartPoint = conveyor.OccupiedPoints.FirstOrDefault(n => n.isMainPoint);
             return _mapper.Map<List<ConveyorDto>>(conveyors);
         }
     }

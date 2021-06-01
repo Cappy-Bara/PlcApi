@@ -12,6 +12,7 @@ namespace PlcApi.Entities.Elements
     {
         public int ConveyorId { get; set; }
         public int BoardId { get; set; }
+        [NotMapped]
         public ConveyorPoint StartPoint { get; set; }
         public bool IsVertical { get; set; }
         public bool IsTurnedDownOrLeft { get; set; }
@@ -57,9 +58,6 @@ namespace PlcApi.Entities.Elements
             output.FirstOrDefault().isMainPoint = true;
             return output;
         }
-
-
-
         public void AddBlockToList(Pallet block)
         {
             PalletsOnConveyor.Add(block);
