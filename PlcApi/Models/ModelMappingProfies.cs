@@ -21,6 +21,9 @@ namespace PlcApi.Models
                 .ForMember(m => m.OutputBit, k => k.MapFrom(s => s.InputOutput.Bit))
                 .ForMember(m => m.OutputByte, k => k.MapFrom(s => s.InputOutput.Byte));
 
+            CreateMap<CreatePalletDto, Pallet>().ReverseMap();
+
+
         }
     }
 }

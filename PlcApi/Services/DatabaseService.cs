@@ -40,8 +40,6 @@ namespace PlcApi.Services
         public int AddPlcToDb(PlcEntity dto) 
         {             //sprawdzanie czy istnieje już plc dla danego użytkownika/maila
                       //
-
-
             var addedValue = _dbContext.PLCs.Add(dto).Entity;
             _dbContext.SaveChanges();
             return addedValue.Id;

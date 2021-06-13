@@ -18,6 +18,7 @@ namespace PlcApi.Entities
         public DbSet<Pallet> Pallets { get; set; }
         public DbSet<Conveyor> Conveyors { get; set; }
         public DbSet<ConveyorPoint> ConveyorPoints { get; set; }
+        public DbSet<Sensor> Sensors { get; set; }
 
         string _connectionString = "Server=DESKTOP-R8L9JN2\\LEARNINGSQL;Database=PlcDb;Trusted_Connection=True;";
         protected override void OnModelCreating(ModelBuilder modelBuilder)

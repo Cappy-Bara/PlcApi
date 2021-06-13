@@ -79,19 +79,33 @@ namespace PlcApi.Services.EntityServices
         {
             var plc = _plcStorageService.GetPlc(plcId);
 
-            List<InputOutput> IOList = _dbContext.InputsOutputs.Where(n => n.PlcId == plcId).ToList();
-            foreach (InputOutput io in IOList)
-            {
-                if (io.Type == IOType.Output)
-                {
-                    io.Status = _getPlcDataService.GetSingleBitStatus(plc, io.Byte, io.Bit, "Q");
-                    _dbContext.InputsOutputs.Update(io);
-                }
-                else if (io.Type == IOType.Input)
-                    _writePlcDataService.WriteSingleBit(plc, io.Byte, io.Bit, "I", io.Status);
-                _dbContext.SaveChanges();
-            }
+            RefreshInputs(plcId, plc);
+            RefreshOutputs(plcId, plc);
+        }
 
+        private void RefreshInputs(int plcId, Plc plc)
+        {
+            foreach(InputOutput input in _dbContext.InputsOutputs.Where(n => n.PlcId == plcId && n.Type == IOType.Input))
+            {
+                _writePlcDataService.WriteSingleBit(plc, input.Byte, input.Bit, "I", input.Status);
+                _dbContext.InputsOutputs.Update(input);
+            }
+        }
+        private void RefreshOutputs(int plcId, Plc plc)
+        {
+            foreach (InputOutput output in _dbContext.InputsOutputs.Where(n => n.PlcId == plcId && n.Type == IOType.Output))
+            {
+                output.Status = _getPlcDataService.GetSingleBitStatus(plc, output.Byte, output.Bit, "Q");
+                _dbContext.InputsOutputs.Update(output);
+            }
+        }
+
+        public InputOutput FindOrCreateIOInDb(int plcId, int ioByte, int ioBit, IOType type)
+        {
+            var io = FindInputOutputInDb(plcId, ioByte, ioBit, type);
+            if (io == null)
+                io = AddInputOutputToDb(plcId, ioByte, ioBit, type);
+            return io;
         }
     }
 }

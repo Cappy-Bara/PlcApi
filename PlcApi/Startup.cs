@@ -45,6 +45,8 @@ namespace PlcApi
             services.AddScoped<IDiodeService, DiodeService>();
             services.AddScoped<IConveyorService, ConveyorService>();
             services.AddScoped<IPlcDataWritingService, PlcDataWritingService>();
+            services.AddScoped<IPalletService, PalletService>();
+            services.AddScoped<ISensorService, SensorService>();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "PlcApi", Version = "v1" });

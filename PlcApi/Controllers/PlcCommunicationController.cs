@@ -9,6 +9,7 @@ using PlcApi.Entities.Elements;
 using PlcApi.Exceptions;
 using PlcApi.Models;
 using PlcApi.Services;
+using PlcApi.Services.EntityServices;
 using PlcApi.Services.Interfaces;
 using S7.Net;
 
@@ -21,13 +22,16 @@ namespace PlcApi.Controllers
         private readonly IDatabaseService _dataExchangeService;
         private readonly IPlcStorageService _communicationService;
         private readonly PlcDbContext _dbContext;
+        private readonly ISensorService _sensorService;
         private readonly IInputOutputService _ioService;
         private readonly IPlcDataReadingService _readingService;
         private readonly IConveyorService _conveyorService;
         private readonly IDiodeService _diodeService;
+        private readonly IPalletService _palletService;
 
         public PlcCommunicationController(IDatabaseService communicationService, IPlcStorageService dbService, PlcDbContext dbContext,
-            IPlcDataReadingService readingService, IInputOutputService ioService, IConveyorService conveyorService, IDiodeService diodeService)
+            IPlcDataReadingService readingService, IInputOutputService ioService, IConveyorService conveyorService, IDiodeService diodeService,
+            ISensorService sensorService, IPalletService palletService)
 
         {
             _dataExchangeService = communicationService;
@@ -37,7 +41,9 @@ namespace PlcApi.Controllers
             _conveyorService = conveyorService;
             _diodeService = diodeService;
             _dbContext = dbContext;
-        }
+            _sensorService = sensorService;
+            _palletService = palletService;
+    }
 
         [HttpGet("{plcId}/{byteAddress}/{bitAddress}")]
         public ActionResult GetSingleOutputState([FromRoute] int plcId, [FromRoute] int byteAddress, [FromRoute] int bitAddress)
@@ -122,18 +128,47 @@ namespace PlcApi.Controllers
             return Ok(_conveyorService.ConveyorsOnBoard(boardId));
         }
 
-
-
-
-
-
-        [HttpGet("timestamp/{plcId}")]
-        //to zaktualizować
-        public ActionResult Timestamp([FromRoute] int plcId)
+        [HttpPost("{plcId}/Sensor")]
+        public ActionResult CreateSensor([FromRoute]int plcId, [FromBody]SensorDto dto)
         {
-            var plc = _communicationService.GetPlc(plcId);
-            _ioService.RefreshInputsAndOutputs(plcId);
-            _diodeService.RefreshDiodesStatus(plcId);
+            _sensorService.AddSensorToDb(plcId,dto);
+            return Ok();
+        }
+
+        [HttpPost("Pallet")]
+        public ActionResult CreatePallet(CreatePalletDto dto)
+        {
+            _palletService.CreatePallet(dto);
+            return Ok();
+        }
+
+
+        [HttpPut("Pallet/{boardId}")]
+        public ActionResult MovePalletsOnBoard([FromRoute]int boardId)
+        {
+            _palletService.MovePalletsOnBoard(boardId);
+            return Ok();
+        }
+
+
+
+
+
+
+
+
+
+
+        [HttpGet("timestamp/{plcId}/{boardId}")]
+        //to zaktualizować!!!!
+        public ActionResult Timestamp([FromRoute] int plcId,[FromRoute] int boardId)
+        {
+            _sensorService.UpdateInputsStatus(boardId);
+            //_ioService.RefreshInputsAndOutputs(plcId);
+            _conveyorService.RefreshConveyorsStatus(plcId);
+            _palletService.MovePalletsOnBoard(boardId);
+            _sensorService.UpdateInputsStatus(boardId);
+            _conveyorService.RefreshConveyorsStatus(plcId);
 
             return Ok("Some time passed");
         }

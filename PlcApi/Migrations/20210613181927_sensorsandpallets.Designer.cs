@@ -9,8 +9,8 @@ using PlcApi.Entities;
 namespace PlcApi.Migrations
 {
     [DbContext(typeof(PlcDbContext))]
-    [Migration("20210519140536_create-db")]
-    partial class createdb
+    [Migration("20210613181927_sensorsandpallets")]
+    partial class sensorsandpallets
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -46,14 +46,81 @@ namespace PlcApi.Migrations
                     b.ToTable("Diodes");
                 });
 
-            modelBuilder.Entity("PlcApi.Entities.Elements.Block", b =>
+            modelBuilder.Entity("PlcApi.Entities.Elements.Conveyor", b =>
                 {
-                    b.Property<int>("BlockId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("PlcId")
+                    b.Property<int>("BoardId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("InputOutputId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsRunning")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsTurnedDownOrLeft")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsVertical")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("Length")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Speed")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InputOutputId");
+
+                    b.ToTable("Conveyors");
+                });
+
+            modelBuilder.Entity("PlcApi.Entities.Elements.ConveyorPoint", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("BoardId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ConveyorId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("X")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Y")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("isMainPoint")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ConveyorId");
+
+                    b.ToTable("ConveyorPoints");
+                });
+
+            modelBuilder.Entity("PlcApi.Entities.Elements.Pallet", b =>
+                {
+                    b.Property<int>("PalletId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("BoardId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ConveyorId")
                         .HasColumnType("int");
 
                     b.Property<int>("PosX")
@@ -62,11 +129,40 @@ namespace PlcApi.Migrations
                     b.Property<int>("PosY")
                         .HasColumnType("int");
 
-                    b.HasKey("BlockId");
+                    b.HasKey("PalletId");
 
-                    b.HasIndex("PlcId");
+                    b.HasIndex("ConveyorId");
 
-                    b.ToTable("Blocks");
+                    b.ToTable("Pallets");
+                });
+
+            modelBuilder.Entity("PlcApi.Entities.Elements.Sensor", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("BoardId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("InputOutputId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsSensing")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("PosX")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PosY")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InputOutputId");
+
+                    b.ToTable("Sensors");
                 });
 
             modelBuilder.Entity("PlcApi.Entities.InputOutput", b =>
@@ -154,15 +250,48 @@ namespace PlcApi.Migrations
                     b.Navigation("InputOutput");
                 });
 
-            modelBuilder.Entity("PlcApi.Entities.Elements.Block", b =>
+            modelBuilder.Entity("PlcApi.Entities.Elements.Conveyor", b =>
                 {
-                    b.HasOne("PlcApi.Entities.PlcEntity", "Plc")
+                    b.HasOne("PlcApi.Entities.InputOutput", "InputOutput")
                         .WithMany()
-                        .HasForeignKey("PlcId")
+                        .HasForeignKey("InputOutputId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Plc");
+                    b.Navigation("InputOutput");
+                });
+
+            modelBuilder.Entity("PlcApi.Entities.Elements.ConveyorPoint", b =>
+                {
+                    b.HasOne("PlcApi.Entities.Elements.Conveyor", "OccupiedByConveyor")
+                        .WithMany("OccupiedPoints")
+                        .HasForeignKey("ConveyorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("OccupiedByConveyor");
+                });
+
+            modelBuilder.Entity("PlcApi.Entities.Elements.Pallet", b =>
+                {
+                    b.HasOne("PlcApi.Entities.Elements.Conveyor", "Conveyor")
+                        .WithMany("PalletsOnConveyor")
+                        .HasForeignKey("ConveyorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Conveyor");
+                });
+
+            modelBuilder.Entity("PlcApi.Entities.Elements.Sensor", b =>
+                {
+                    b.HasOne("PlcApi.Entities.InputOutput", "InputOutput")
+                        .WithMany()
+                        .HasForeignKey("InputOutputId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("InputOutput");
                 });
 
             modelBuilder.Entity("PlcApi.Entities.InputOutput", b =>
@@ -185,6 +314,13 @@ namespace PlcApi.Migrations
                         .IsRequired();
 
                     b.Navigation("Model");
+                });
+
+            modelBuilder.Entity("PlcApi.Entities.Elements.Conveyor", b =>
+                {
+                    b.Navigation("OccupiedPoints");
+
+                    b.Navigation("PalletsOnConveyor");
                 });
 
             modelBuilder.Entity("PlcApi.Entities.PlcEntity", b =>

@@ -14,6 +14,7 @@ namespace PlcApi.Services.Interfaces
         public InputOutput AddInputOutputToDb(int plcId, int bit, int myByte, IOType type);
         public int AddInputOutputToDb(int plcId, IOCreateDto dto);
         public void RefreshInputsAndOutputs(int plcId);
+        public InputOutput FindOrCreateIOInDb(int plcId, int ioByte, int ioBit, IOType type);
 
 
     }

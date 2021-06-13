@@ -10,7 +10,7 @@ namespace PlcApi.Entities.Elements
 {
     public class Conveyor
     {
-        public int ConveyorId { get; set; }
+        public int Id { get; set; }
         public int BoardId { get; set; }
         [NotMapped]
         public ConveyorPoint StartPoint { get; set; }
@@ -48,68 +48,17 @@ namespace PlcApi.Entities.Elements
             if (IsVertical)
             {
                 for (int i = 0; i < Length; i++)
-                    output.Add(new ConveyorPoint(StartPoint.X, StartPoint.Y + i * sign, BoardId, ConveyorId));
+                    output.Add(new ConveyorPoint(StartPoint.X, StartPoint.Y + i * sign, BoardId, Id));
             }
             else
             {
                 for (int i = 0; i < Length; i++)
-                    output.Add(new ConveyorPoint(StartPoint.X + i * sign, StartPoint.Y, BoardId, ConveyorId));
+                    output.Add(new ConveyorPoint(StartPoint.X + i * sign, StartPoint.Y, BoardId, Id));
             }
             output.FirstOrDefault().isMainPoint = true;
             return output;
         }
-        public void AddBlockToList(Pallet block)
-        {
-            PalletsOnConveyor.Add(block);
-        }
-        public void RemoveBlockFromList(Pallet block)
-        {
-            PalletsOnConveyor.Remove(block);
-        }
-        public void MoveAllBlocks()
-        {
-            int sign = IsTurnedDownOrLeft ? -1 : 1;
-            if (IsVertical)
-            {
-                foreach (Pallet block in PalletsOnConveyor)
-                {
-                    block.PosY += sign * Speed;
-                }
-            }
-            else
-            {
-                foreach (Pallet block in PalletsOnConveyor)
-                {
-                    block.PosX += sign * Speed;
-                }
-            }
-        }
-        public bool CheckIfBlockOnConveyor(Pallet block)
-        {
-            if (OccupiedPoints.Contains(
-                new Point
-                {
-                X = block.PosX,
-                Y = block.PosY,
-                }))
-                return true;
-            return false;
-        }
-        public void RemoveBlocksNotOnConveyor()
-        {
-            foreach (Pallet block in PalletsOnConveyor)
-            {
-                if (CheckIfBlockOnConveyor(block))
-                    PalletsOnConveyor.Remove(block);
-            }
-        }
-        public void ConveyorWorkingScheme()
-        {
-            UpdateStatus();
-            RemoveBlocksNotOnConveyor();
-            if (IsRunning)
-                MoveAllBlocks();
-            RemoveBlocksNotOnConveyor();
-        }
+
+
     }
 }

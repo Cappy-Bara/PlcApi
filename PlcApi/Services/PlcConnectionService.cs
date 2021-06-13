@@ -29,9 +29,5 @@ namespace PlcApi.Services
             if (!plc.IsConnected)
                 ThrowLostConnection();
         }
-
-
-
-
     }
 }

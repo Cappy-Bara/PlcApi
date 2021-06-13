@@ -32,10 +32,7 @@ namespace PlcApi.Services.EntityServices
 
         public int AddConveyorToDb(int plcId, ConveyorDto dto)
         {
-
-            var io = _ioService.FindInputOutputInDb(plcId, dto.OutputByte, dto.OutputBit, IOType.Output);
-            if (io == null)
-                io = _ioService.AddInputOutputToDb(plcId, dto.OutputBit, dto.OutputByte, IOType.Output);
+            var io =_ioService.FindOrCreateIOInDb(plcId, dto.OutputByte, dto.OutputBit, IOType.Output);
 
             var startPoint = FindConveyorPoint(dto.BoardId, dto.X, dto.Y);
             if (startPoint != null)
@@ -64,7 +61,7 @@ namespace PlcApi.Services.EntityServices
             occupiedPoints.FirstOrDefault(n => n.X == startPoint.X && n.Y == startPoint.Y).isMainPoint = true;
             _dbContext.ConveyorPoints.AddRange(occupiedPoints);
             _dbContext.SaveChanges();
-            return conveyor.ConveyorId;
+            return conveyor.Id;
         }
         public ConveyorPoint FindConveyorPoint(int boardId, int x, int y)
         {
