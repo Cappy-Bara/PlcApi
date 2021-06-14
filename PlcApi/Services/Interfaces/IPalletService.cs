@@ -1,4 +1,6 @@
-﻿using PlcApi.Models;
+﻿using System.Collections.Generic;
+using PlcApi.Entities.Elements;
+using PlcApi.Models;
 
 namespace PlcApi.Services.EntityServices
 {
@@ -6,5 +8,6 @@ namespace PlcApi.Services.EntityServices
     {
         void CreatePallet(CreatePalletDto dto);
         void MovePalletsOnBoard(int boardId);
+        public List<Pallet> GetAllPalletsOnBoard(int boardId);
     }
 }

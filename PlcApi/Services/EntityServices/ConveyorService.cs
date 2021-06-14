@@ -46,6 +46,7 @@ namespace PlcApi.Services.EntityServices
                 InputOutputId = io.Id,
                 BoardId = dto.BoardId,
                 StartPoint = startPoint,
+                Speed = dto.Speed
             };
             conveyor = _dbContext.Conveyors.Add(conveyor).Entity;
             _dbContext.SaveChanges();

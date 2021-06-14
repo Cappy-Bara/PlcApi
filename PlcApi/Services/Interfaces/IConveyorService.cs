@@ -10,7 +10,7 @@ namespace PlcApi.Services.Interfaces
     public interface IConveyorService
     {
         public int AddConveyorToDb(int plcId, ConveyorDto dto);
-        public void RefreshConveyorsStatus(int plcId);
+        public void RefreshConveyorsStatus(int boardId);
         public List<ConveyorDto> ConveyorsOnBoard(int boardId);
     }
 }

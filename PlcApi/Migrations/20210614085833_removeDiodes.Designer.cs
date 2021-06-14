@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlcApi.Entities;
 
 namespace PlcApi.Migrations
 {
     [DbContext(typeof(PlcDbContext))]
-    partial class PlcDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210614085833_removeDiodes")]
+    partial class removeDiodes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -42,7 +42,7 @@ namespace PlcApi
             services.AddScoped<IPlcConnectionService, PlcConnectionService>();
             services.AddScoped<IPlcDataReadingService, PlcDataReadingService>();
             services.AddScoped<IInputOutputService, InputOutputService>();
-            services.AddScoped<IDiodeService, DiodeService>();
+            //services.AddScoped<IDiodeService, DiodeService>();
             services.AddScoped<IConveyorService, ConveyorService>();
             services.AddScoped<IPlcDataWritingService, PlcDataWritingService>();
             services.AddScoped<IPalletService, PalletService>();

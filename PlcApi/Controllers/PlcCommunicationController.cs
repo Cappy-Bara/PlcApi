@@ -26,11 +26,11 @@ namespace PlcApi.Controllers
         private readonly IInputOutputService _ioService;
         private readonly IPlcDataReadingService _readingService;
         private readonly IConveyorService _conveyorService;
-        private readonly IDiodeService _diodeService;
+        //private readonly IDiodeService _diodeService;
         private readonly IPalletService _palletService;
 
         public PlcCommunicationController(IDatabaseService communicationService, IPlcStorageService dbService, PlcDbContext dbContext,
-            IPlcDataReadingService readingService, IInputOutputService ioService, IConveyorService conveyorService, IDiodeService diodeService,
+            IPlcDataReadingService readingService, IInputOutputService ioService, IConveyorService conveyorService,
             ISensorService sensorService, IPalletService palletService)
 
         {
@@ -39,7 +39,7 @@ namespace PlcApi.Controllers
             _ioService = ioService;
             _readingService = readingService;
             _conveyorService = conveyorService;
-            _diodeService = diodeService;
+            //_diodeService = diodeService;
             _dbContext = dbContext;
             _sensorService = sensorService;
             _palletService = palletService;
@@ -80,12 +80,16 @@ namespace PlcApi.Controllers
             return Ok("I/O Created");
         }
 
+        /*
         [HttpPost("{plcId}/Diode")]
         public ActionResult CreateDiode([FromRoute] int plcId, [FromBody] CreateDiodeDto dto)
         {
             _diodeService.AddDiodeToDb(plcId, dto);
             return Ok("Diode created");
         }
+
+        */
+
 
         [HttpPut("{plcId}")]
         public ActionResult RefreshIOStatus([FromRoute]int plcId)
@@ -94,7 +98,7 @@ namespace PlcApi.Controllers
             return Ok("Refreshed.");
         }
 
-
+        /*
         [HttpPut("{plcId}/Diode")]
         public ActionResult RefreshDiodesState([FromRoute] int plcId)
         {
@@ -107,6 +111,8 @@ namespace PlcApi.Controllers
         {
             return Ok(_diodeService.ReturnPlcDiodes(plcId));
         }
+
+        */
 
         [HttpPost("{plcId}/Conveyor")]
         public ActionResult CreateConveyor([FromRoute] int plcId, [FromBody] ConveyorDto dto)
@@ -151,24 +157,20 @@ namespace PlcApi.Controllers
         }
 
 
-
-
-
-
-
-
+        [HttpGet("Pallet/{boardId}")]
+        public ActionResult<List<Pallet>> GetAllPallets([FromRoute] int boardId)
+        {
+            return Ok(_palletService.GetAllPalletsOnBoard(boardId));
+        }
 
 
         [HttpGet("timestamp/{plcId}/{boardId}")]
-        //to zaktualizować!!!!
         public ActionResult Timestamp([FromRoute] int plcId,[FromRoute] int boardId)
         {
             _sensorService.UpdateInputsStatus(boardId);
-            //_ioService.RefreshInputsAndOutputs(plcId);
-            _conveyorService.RefreshConveyorsStatus(plcId);
+            _ioService.RefreshInputsAndOutputs(plcId);
+            _conveyorService.RefreshConveyorsStatus(boardId);
             _palletService.MovePalletsOnBoard(boardId);
-            _sensorService.UpdateInputsStatus(boardId);
-            _conveyorService.RefreshConveyorsStatus(plcId);
 
             return Ok("Some time passed");
         }

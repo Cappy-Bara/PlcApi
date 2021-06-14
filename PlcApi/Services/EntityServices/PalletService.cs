@@ -28,8 +28,13 @@ namespace PlcApi.Services.EntityServices
             _dbContext.Pallets.Add(pallet);
             _dbContext.SaveChanges();
         }
+        public List<Pallet> GetAllPalletsOnBoard(int boardId)
+        {
+            var palletsOnBoard = _dbContext.Pallets.Where(m => m.BoardId == boardId).ToList();
+            return palletsOnBoard;
+        }
 
-        public void MovePalletsOnConveyor(Conveyor conveyor)
+        private void MovePalletsOnConveyor(Conveyor conveyor)
         {
             int sign = conveyor.IsTurnedDownOrLeft ? -1 : 1;
             if (conveyor.IsVertical)
@@ -47,8 +52,7 @@ namespace PlcApi.Services.EntityServices
                 }
             }
         }
-
-        public void UpdatePalletesOnConveyors(int boardId)
+        private void UpdatePalletesOnConveyors(int boardId)
         {
             var conveyorPoints = _dbContext.Conveyors.Include(n => n.OccupiedPoints)
                                     .Where(n => n.BoardId == boardId)

@@ -17,13 +17,11 @@ namespace PlcApi.Services
         {
             _connectionService = connectionService;
         }
-
         public Boolean GetSingleBitStatus(Plc plc, int byteAddress, int bitAddress, string type)
         {
             _connectionService.ThrowExceptionIfNotConnected(plc);
             return ReadSingleBitFromPlc(plc, byteAddress, bitAddress, type);
         }
-
         private Boolean ReadSingleBitFromPlc(Plc plc, int byteAddress, int bitAddress, string type)
         {
             return (Boolean)plc.Read($"{type}{byteAddress}.{bitAddress}");

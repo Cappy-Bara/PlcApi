@@ -29,6 +29,7 @@ namespace PlcApi.Entities.Elements
             mainPoint.isMainPoint = true;
             StartPoint = mainPoint;
             Length = length;
+            Speed = speed;
         }
         public Conveyor()
         {
@@ -39,7 +40,7 @@ namespace PlcApi.Entities.Elements
             if (InputOutput.Status == true)
                 IsRunning = true;
             else
-                IsRunning = true;
+                IsRunning = false;
         }
         public List<ConveyorPoint> ReturnOccupiedPoints()
         {

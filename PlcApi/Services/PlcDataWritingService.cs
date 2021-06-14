@@ -12,7 +12,6 @@ namespace PlcApi.Services
     {
         private readonly IPlcConnectionService _connectionService;
 
-
         public PlcDataWritingService(IPlcConnectionService connectionService)
         {
             _connectionService = connectionService;

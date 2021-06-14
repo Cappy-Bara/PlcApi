@@ -50,7 +50,7 @@ namespace PlcApi.Services.EntityServices
             _dbContext.SaveChanges();
             return addedValue.Id;
         }
-        public InputOutput AddInputOutputToDb(int plcId, int bit, int myByte, IOType type)
+        public InputOutput AddInputOutputToDb(int plcId, int ioByte, int ioBit, IOType type)
         {
             var plc = _dbContext.PLCs.FirstOrDefault(n => n.Id == plcId) ?? throw new NotFoundException("This Plc does not exist.");
             var addedValue = _dbContext.InputsOutputs.Add(
@@ -58,8 +58,8 @@ namespace PlcApi.Services.EntityServices
                 {
                     PlcId = plcId,
                     Plc = plc,
-                    Byte = myByte,
-                    Bit = bit,
+                    Byte = ioByte,
+                    Bit = ioBit,
                     Type = type
                 }
                 ).Entity;
